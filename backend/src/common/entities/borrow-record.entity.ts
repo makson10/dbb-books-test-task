@@ -13,7 +13,7 @@ export class BorrowRecord {
   @Column({ type: 'int' })
   borrowerId: number;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz', default: new Date() })
   borrowedAt: Date;
 
   @Column({ type: 'timestamptz', nullable: true })

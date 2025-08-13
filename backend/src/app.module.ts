@@ -13,6 +13,7 @@ import { BorrowRecord } from '@/common/entities/borrow-record.entity';
 import { User } from '@/common/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
+import { BorrowReturnModule } from './modules/borrow-return/borrowReturn.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UsersModule } from './modules/users/users.module';
     GenresModule,
     PublishersModule,
     BorrowModule,
+    BorrowReturnModule,
     UsersModule,
     TypeOrmModule.forRoot({
       type: 'postgres',

@@ -6,7 +6,7 @@ export class Author {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   fullName: string;
 
   @Column({ type: 'date' })
