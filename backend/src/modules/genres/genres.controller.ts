@@ -34,7 +34,7 @@ export class GenresController {
   @ApiResponse({ status: 201, description: 'Genre created successfully' })
   // change to Dto
   createGenres() {
-    const newGenre: GenreDto = {
+    const newGenre: Omit<GenreDto, 'id'> = {
       name: faker.book.genre(),
     };
     const genre = this.genreRepository.create(newGenre);

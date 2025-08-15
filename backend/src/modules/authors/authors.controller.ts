@@ -48,7 +48,7 @@ export class AuthorsController {
   @Post()
   // change it to Dto
   createAuthor() {
-    const newAuthor: AuthorDto = {
+    const newAuthor: Omit<AuthorDto, 'id'> = {
       fullName: faker.person.fullName(),
       birthDate: faker.date.past({ years: 80 }),
     };

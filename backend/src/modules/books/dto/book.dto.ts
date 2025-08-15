@@ -1,29 +1,33 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { IsDate, IsISBN, IsNumber, IsString } from 'class-validator';
 
+@ApiSchema()
 export class BookDto {
-  @ApiProperty({ required: false })
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
   @IsString()
   title: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
   @IsISBN()
   isbn: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsDate()
   publishDate: Date;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsNumber()
   copiesTotal: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsNumber()
   copiesAvailable: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsNumber()
   publisherId: number;
 }

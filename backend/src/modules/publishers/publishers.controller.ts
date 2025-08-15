@@ -34,7 +34,7 @@ export class PublishersController {
   @ApiResponse({ status: 201, description: 'Publisher created successfully' })
   // change to Dto
   createPublisher() {
-    const newPublisher: PublisherDto = {
+    const newPublisher: Omit<PublisherDto, 'id'> = {
       name: faker.company.name(),
       establishedYear: faker.date.past({ years: 600 }).getFullYear(),
     };

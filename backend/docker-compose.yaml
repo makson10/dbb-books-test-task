@@ -4,7 +4,7 @@ services:
     container_name: backend
     ports:
       - '${SERVER_PORT}:${SERVER_PORT}'
-    develop: 
+    develop:
       watch:
         - path: ./src
           action: sync

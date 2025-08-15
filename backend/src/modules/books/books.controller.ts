@@ -1,12 +1,6 @@
 import { Book } from '@/common/entities/book.entity';
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetAllBooksDto } from './dto/getAllBooks.dto';
@@ -14,6 +8,7 @@ import { BookDto } from './dto/book.dto';
 import { faker } from '@faker-js/faker';
 import { Author } from '@/common/entities/author.entity';
 import { BorrowRecord } from '@/common/entities/borrow-record.entity';
+import { BookWithRelationsDto } from './dto/bookWithRelations.dto';
 
 @ApiTags('books')
 @Controller('books')
@@ -25,19 +20,47 @@ export class BooksController {
     private borrowRecordRepository: Repository<BorrowRecord>,
   ) {}
 
-  @Get()
   @ApiOperation({
     summary: 'Get all books with pagination and sorting',
     tags: ['books'],
     operationId: 'getAllBooks',
   })
-  @ApiResponse({ status: 200, description: 'Returns paginated list of books' })
-  getAllBooks(@Param() parameters: GetAllBooksDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Returns paginated list of books',
+    type: [BookWithRelationsDto],
+  })
+  @Get()
+  getAllBooks(
+    @Query() parameters: GetAllBooksDto,
+  ): Promise<BookWithRelationsDto[]> {
     return this.booksRepository.find({
       take: parameters.limit,
       skip: (parameters.page - 1) * parameters.limit,
       order: { [parameters.sortBy]: parameters.order },
+      relations: ['authors', 'publisher', 'genres'],
     });
+  }
+
+  @Get('count')
+  @ApiOperation({
+    summary: 'Get total count of books',
+    tags: ['books'],
+    operationId: 'getBookCount',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns total count of books',
+    schema: {
+      type: 'object',
+      properties: {
+        count: { type: 'number' },
+      },
+    },
+  })
+  async getBookCount(): Promise<{ count: number }> {
+    const count = await this.booksRepository.count();
+    return { count };
   }
 
   @Post()
@@ -49,7 +72,7 @@ export class BooksController {
   @ApiResponse({ status: 201, description: 'Book created successfully' })
   // change to Dto
   async createBook() {
-    const newBook: BookDto = {
+    const newBook: Omit<BookDto, 'id'> = {
       title: faker.book.title(),
       copiesAvailable: faker.number.int({ min: 1, max: 100 }),
       copiesTotal: faker.number.int({ min: 1, max: 100 }),
