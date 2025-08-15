@@ -83,16 +83,38 @@ const injectedRtkApi = api
         query: () => ({ url: `/publishers`, method: "POST" }),
         invalidatesTags: ["publishers"],
       }),
+      borrowControllerGetBorrowRecords: build.query<
+        BorrowControllerGetBorrowRecordsApiResponse,
+        BorrowControllerGetBorrowRecordsApiArg
+      >({
+        query: () => ({ url: `/borrow` }),
+        providesTags: ["borrow"],
+      }),
       borrowBook: build.mutation<BorrowBookApiResponse, BorrowBookApiArg>({
-        query: () => ({ url: `/borrow`, method: "POST" }),
+        query: (queryArg) => ({
+          url: `/borrow`,
+          method: "POST",
+          body: queryArg.borrowBookDto,
+        }),
         invalidatesTags: ["borrow"],
       }),
       checkIsUserBorrowBookAndDontReturn: build.mutation<
         CheckIsUserBorrowBookAndDontReturnApiResponse,
         CheckIsUserBorrowBookAndDontReturnApiArg
       >({
-        query: () => ({ url: `/return`, method: "POST" }),
+        query: (queryArg) => ({
+          url: `/return`,
+          method: "POST",
+          body: queryArg.borrowBookDto,
+        }),
         invalidatesTags: ["return"],
+      }),
+      usersControllerGetUsers: build.query<
+        UsersControllerGetUsersApiResponse,
+        UsersControllerGetUsersApiArg
+      >({
+        query: () => ({ url: `/users` }),
+        providesTags: ["users"],
       }),
       createUser: build.mutation<CreateUserApiResponse, CreateUserApiArg>({
         query: () => ({ url: `/users`, method: "POST" }),
@@ -143,10 +165,18 @@ export type GetAllPublishersApiResponse = unknown;
 export type GetAllPublishersApiArg = void;
 export type CreatePublisherApiResponse = unknown;
 export type CreatePublisherApiArg = void;
+export type BorrowControllerGetBorrowRecordsApiResponse = unknown;
+export type BorrowControllerGetBorrowRecordsApiArg = void;
 export type BorrowBookApiResponse = unknown;
-export type BorrowBookApiArg = void;
+export type BorrowBookApiArg = {
+  borrowBookDto: BorrowBookDto;
+};
 export type CheckIsUserBorrowBookAndDontReturnApiResponse = unknown;
-export type CheckIsUserBorrowBookAndDontReturnApiArg = void;
+export type CheckIsUserBorrowBookAndDontReturnApiArg = {
+  borrowBookDto: BorrowBookDto;
+};
+export type UsersControllerGetUsersApiResponse = unknown;
+export type UsersControllerGetUsersApiArg = void;
 export type CreateUserApiResponse = unknown;
 export type CreateUserApiArg = void;
 export type PublisherDto = {
@@ -178,6 +208,10 @@ export type BookWithRelationsDto = {
   authors: AuthorDto[];
   genres: Genre[];
 };
+export type BorrowBookDto = {
+  bookTitle: string;
+  userName: string;
+};
 export const {
   useGetAllBooksQuery,
   useCreateBookMutation,
@@ -190,7 +224,9 @@ export const {
   useCreateGenreMutation,
   useGetAllPublishersQuery,
   useCreatePublisherMutation,
+  useBorrowControllerGetBorrowRecordsQuery,
   useBorrowBookMutation,
   useCheckIsUserBorrowBookAndDontReturnMutation,
+  useUsersControllerGetUsersQuery,
   useCreateUserMutation,
 } = injectedRtkApi;

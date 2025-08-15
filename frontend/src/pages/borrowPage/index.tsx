@@ -1,216 +1,145 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { borrowSchema, type BorrowFormData } from '@/assets/validationSchema';
+import { useBorrowBookMutation } from '@/stores/api/baseApi';
+import { useEffect, useState } from 'react';
+import { ErrorNotification } from '@/components/ErrorNotification';
 
 function BorrowPage() {
-	const { id } = useParams();
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
-		userName: '',
-		userEmail: '',
-		borrowDate: new Date().toISOString().split('T')[0],
-		returnDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
-			.toISOString()
-			.split('T')[0],
+	const [searchParams] = useSearchParams();
+	const [borrowBook, { isLoading: isBorrowing }] = useBorrowBookMutation();
+	const [errorMessage, setErrorMessage] = useState<string>('');
+	const [showError, setShowError] = useState(false);
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+		getValues,
+		setValue,
+	} = useForm<BorrowFormData>({
+		resolver: yupResolver(borrowSchema),
 	});
-	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	// Mock book data - replace with actual API call when ready
-	const book = {
-		id: parseInt(id || '1'),
-		title: 'The Great Gatsby',
-		isbn: '978-0743273565',
-		copiesAvailable: 3,
-		publisher: { name: 'Scribner' },
-		authors: [{ fullName: 'F. Scott Fitzgerald' }],
+	const handleCancel = () => navigate('/');
+
+	const showErrorNotification = (message: string) => {
+		setErrorMessage(message);
+		setShowError(true);
 	};
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+	const hideErrorNotification = () => {
+		setShowError(false);
+		setErrorMessage('');
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setIsSubmitting(true);
+	const onSubmit = async () => {
+		try {
+			const newBorrow = getValues();
+			await borrowBook({ borrowBookDto: newBorrow }).unwrap();
 
-		// Simulate API call
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-
-		// Here you would call the actual borrow API
-		// await borrowBook({ bookId: book.id, ...formData });
-
-		setIsSubmitting(false);
-
-		// Navigate back to books list with success message
-		navigate('/', {
-			state: { message: `Successfully borrowed "${book.title}"!` },
-		});
+			reset();
+			navigate('/');
+		} catch (error: any) {
+			console.error('Failed to borrow book:', error);
+			showErrorNotification(error.data.message || '');
+		}
 	};
 
-	const handleCancel = () => {
-		navigate(`/book/${book.id}`);
-	};
+	useEffect(() => {
+		const requestedBookTitle = searchParams.get('bookTitle');
+		if (requestedBookTitle) {
+			setValue('bookTitle', requestedBookTitle);
+		}
+	}, [searchParams]);
 
 	return (
-		<div className="space-y-6">
+		<div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
 			<div className="flex items-center gap-4">
 				<button
-					onClick={() => navigate(`/book/${book.id}`)}
+					onClick={() => navigate('/')}
 					className="px-4 py-2 text-pink-600 hover:text-pink-800 font-medium hover:underline flex items-center gap-2">
-					← Back to Book Details
+					← Back to Books
 				</button>
 			</div>
-
-			<div className="max-w-2xl mx-auto">
+			<div className="max-w-md mx-auto relative">
 				<div className="bg-white rounded-lg shadow-lg p-8">
 					<div className="text-center mb-8">
 						<h1 className="text-3xl font-bold text-gray-800 mb-2">
 							Borrow Book
 						</h1>
 						<p className="text-gray-600">
-							Please fill out the form below to borrow this book
+							Please fill out the form below to borrow a book
 						</p>
 					</div>
 
-					{/* Book Summary */}
-					<div className="bg-gradient-to-r from-pink-50 to-green-50 rounded-lg p-6 mb-8 border border-pink-200">
-						<h3 className="text-lg font-semibold text-gray-800 mb-3">
-							Book Information
-						</h3>
-						<div className="grid grid-cols-2 gap-4 text-sm">
-							<div>
-								<span className="text-gray-600 font-medium">Title:</span>
-								<p className="text-gray-800 font-medium">{book.title}</p>
-							</div>
-							<div>
-								<span className="text-gray-600 font-medium">Author:</span>
-								<p className="text-gray-800">
-									{book.authors.map((a) => a.fullName).join(', ')}
+					<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+						{/* User Name Input */}
+						<div>
+							<label
+								htmlFor="userName"
+								className="block text-sm font-medium text-gray-700 mb-2">
+								User Name *
+							</label>
+							<input
+								type="text"
+								id="userName"
+								{...register('userName')}
+								className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors ${
+									errors.userName
+										? 'border-red-300 focus:ring-red-500'
+										: 'border-gray-300'
+								}`}
+								placeholder="Enter user name"
+							/>
+							{errors.userName && (
+								<p className="mt-1 text-sm text-red-600">
+									{errors.userName.message}
 								</p>
-							</div>
-							<div>
-								<span className="text-gray-600 font-medium">ISBN:</span>
-								<p className="text-gray-800 font-mono">{book.isbn}</p>
-							</div>
-							<div>
-								<span className="text-gray-600 font-medium">Publisher:</span>
-								<p className="text-gray-800">{book.publisher.name}</p>
-							</div>
-						</div>
-						<div className="mt-3 pt-3 border-t border-pink-200">
-							<span className="text-gray-600 font-medium">
-								Copies Available:{' '}
-							</span>
-							<span className="text-green-600 font-semibold">
-								{book.copiesAvailable}
-							</span>
-						</div>
-					</div>
-
-					{/* Borrow Form */}
-					<form onSubmit={handleSubmit} className="space-y-6">
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<div>
-								<label
-									htmlFor="userName"
-									className="block text-sm font-medium text-gray-700 mb-2">
-									Full Name *
-								</label>
-								<input
-									type="text"
-									id="userName"
-									name="userName"
-									value={formData.userName}
-									onChange={handleInputChange}
-									required
-									className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-									placeholder="Enter your full name"
-								/>
-							</div>
-
-							<div>
-								<label
-									htmlFor="userEmail"
-									className="block text-sm font-medium text-gray-700 mb-2">
-									Email Address *
-								</label>
-								<input
-									type="email"
-									id="userEmail"
-									name="userEmail"
-									value={formData.userEmail}
-									onChange={handleInputChange}
-									required
-									className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-									placeholder="Enter your email"
-								/>
-							</div>
-
-							<div>
-								<label
-									htmlFor="borrowDate"
-									className="block text-sm font-medium text-gray-700 mb-2">
-									Borrow Date *
-								</label>
-								<input
-									type="date"
-									id="borrowDate"
-									name="borrowDate"
-									value={formData.borrowDate}
-									onChange={handleInputChange}
-									required
-									className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-								/>
-							</div>
-
-							<div>
-								<label
-									htmlFor="returnDate"
-									className="block text-sm font-medium text-gray-700 mb-2">
-									Expected Return Date *
-								</label>
-								<input
-									type="date"
-									id="returnDate"
-									name="returnDate"
-									value={formData.returnDate}
-									onChange={handleInputChange}
-									required
-									min={formData.borrowDate}
-									className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-								/>
-							</div>
+							)}
 						</div>
 
-						{/* Terms and Conditions */}
-						<div className="bg-gray-50 rounded-lg p-4">
-							<h4 className="text-sm font-medium text-gray-800 mb-2">
-								Borrowing Terms:
-							</h4>
-							<ul className="text-sm text-gray-600 space-y-1">
-								<li>• Books can be borrowed for up to 14 days</li>
-								<li>• Late returns may incur fines</li>
-								<li>• Please return books in the same condition</li>
-								<li>• You can renew books if no one else has requested them</li>
-							</ul>
+						{/* Book Title Input */}
+						<div>
+							<label
+								htmlFor="bookTitle"
+								className="block text-sm font-medium text-gray-700 mb-2">
+								Book Title *
+							</label>
+							<input
+								type="text"
+								id="bookTitle"
+								{...register('bookTitle')}
+								className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-colors ${
+									errors.bookTitle
+										? 'border-red-300 focus:ring-red-500'
+										: 'border-gray-300'
+								}`}
+								placeholder="Enter book title"
+							/>
+							{errors.bookTitle && (
+								<p className="mt-1 text-sm text-red-600">
+									{errors.bookTitle.message}
+								</p>
+							)}
 						</div>
 
 						{/* Action Buttons */}
 						<div className="flex gap-4 pt-4">
 							<button
 								type="submit"
-								disabled={isSubmitting}
+								disabled={isBorrowing}
 								className="flex-1 bg-green-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-								{isSubmitting ? (
+								{isBorrowing ? (
 									<span className="flex items-center justify-center gap-2">
 										<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
 										Processing...
 									</span>
 								) : (
-									'Confirm Borrow'
+									'Submit'
 								)}
 							</button>
 
@@ -224,6 +153,11 @@ function BorrowPage() {
 					</form>
 				</div>
 			</div>
+			<ErrorNotification
+				message={errorMessage}
+				isVisible={showError}
+				onClose={hideErrorNotification}
+			/>
 		</div>
 	);
 }

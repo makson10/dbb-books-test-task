@@ -13,3 +13,7 @@ createRoot(document.getElementById('root')!).render(
 		</Provider>
 	</StrictMode>
 );
+
+const portalContainer = document.createElement('div');
+portalContainer.id = 'portal-root';
+document.body.appendChild(portalContainer);

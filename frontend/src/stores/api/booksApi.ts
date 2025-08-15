@@ -27,7 +27,6 @@ export const booksApi = createApi({
 				if (params.order) searchParams.append('order', params.order);
 
 				const queryString = searchParams.toString();
-				console.log(queryString);
 				return {
 					url: `/books${queryString ? `?${queryString}` : ''}`,
 					method: 'GET',

@@ -12,18 +12,22 @@
 		"rtk-codegen": "npx @rtk-query/codegen-openapi openapi.config.ts"
 	},
 	"dependencies": {
+		"@hookform/resolvers": "^5.2.1",
 		"@reduxjs/toolkit": "^2.8.2",
 		"@rtk-query/codegen-openapi": "^2.0.0",
 		"@tailwindcss/vite": "^4.1.11",
+		"axios": "^1.11.0",
 		"dotenv": "^17.2.1",
 		"esbuild-runner": "^2.2.2",
 		"react": "^19.1.1",
 		"react-dom": "^19.1.1",
+		"react-hook-form": "^7.62.0",
 		"react-redux": "^9.2.0",
 		"react-router": "^7.8.0",
 		"react-router-dom": "^7.8.0",
 		"tailwindcss": "^4.1.11",
-		"vite-tsconfig-paths": "^5.1.4"
+		"vite-tsconfig-paths": "^5.1.4",
+		"yup": "^1.7.0"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.32.0",
