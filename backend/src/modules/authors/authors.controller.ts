@@ -14,10 +14,10 @@ export class AuthorsController {
   ) {}
 
   //! remove it later
-  //   @Get()
-  //   getAllAuthors() {
-  //     return this.authorsRepository.find();
-  //   }
+  @Get()
+  getAllAuthors() {
+    return this.authorsRepository.find();
+  }
 
   //!   solve bug
   @ApiOperation({
