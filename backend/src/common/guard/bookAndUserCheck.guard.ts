@@ -5,18 +5,13 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Observable } from 'rxjs';
 import { Repository } from 'typeorm';
-import { BorrowRecord } from '../entities/borrow-record.entity';
 import { Book } from '../entities/book.entity';
 import { User } from '../entities/user.entity';
 
 @Injectable()
 export class BookAndUserCheckGuard implements CanActivate {
   constructor(
-    @InjectRepository(BorrowRecord)
-    private borrowRecordRepository: Repository<BorrowRecord>,
-
     @InjectRepository(Book)
     private bookRepository: Repository<Book>,
 

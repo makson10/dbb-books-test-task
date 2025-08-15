@@ -90,6 +90,25 @@ export class BooksController {
     return await this.booksRepository.save(book);
   }
 
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Get details about specific book',
+    tags: ['books'],
+    operationId: 'getBookDetails',
+  })
+  @ApiParam({ name: 'id', description: 'Book ID', type: 'string' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns borrowing history for the book',
+    type: BookWithRelationsDto,
+  })
+  getBookDetails(@Param('id') bookId: string) {
+    return this.booksRepository.findOne({
+      where: { id: parseInt(bookId) },
+      relations: ['authors', 'publisher', 'genres'],
+    });
+  }
+
   @Get(':id/history')
   @ApiOperation({
     summary: 'Get borrowing history for a specific book',

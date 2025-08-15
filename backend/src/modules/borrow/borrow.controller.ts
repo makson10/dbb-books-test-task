@@ -11,6 +11,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BorrowRecord } from '@/common/entities/borrow-record.entity';
@@ -19,6 +20,7 @@ import { User } from '@/common/entities/user.entity';
 import { Book } from '@/common/entities/book.entity';
 import { BookAndUserCheckGuard } from '@/common/guard/bookAndUserCheck.guard';
 import type { Request } from 'express';
+import { BorrowBookDto } from './dto/borrowBook.dto';
 
 @ApiTags('borrow')
 @Controller('borrow')
@@ -46,6 +48,7 @@ export class BorrowController {
     status: 400,
     description: 'User has reached maximum limit of borrowed books',
   })
+  @ApiBody({ type: BorrowBookDto })
   @UseGuards(BookAndUserCheckGuard)
   @Post()
   async borrowBook(

@@ -1,25 +1,51 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import {
+	useGetBookDetailsQuery,
+	useGetBookHistoryQuery,
+} from '@/stores/api/baseApi';
+import type {
+	BookWithRelationsDto,
+	AuthorDto,
+	Genre,
+} from '@/stores/api/baseApi';
+import type { BorrowRecord } from '@/types/borrow.types';
 
 function BookDetail() {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
-	// Mock book data - replace with actual API call when ready
-	const book = {
-		id: parseInt(id || '1'),
-		title: 'The Great Gatsby',
-		isbn: '978-0743273565',
-		publishDate: '1925-04-10',
-		copiesTotal: 5,
-		copiesAvailable: 3,
-		publisher: { id: 1, name: 'Scribner', establishedYear: 1846 },
-		authors: [
-			{ id: 1, fullName: 'F. Scott Fitzgerald', birthDate: '1896-09-24' },
-		],
-		genres: [{ id: 1, name: 'Fiction' }],
-		description:
-			"The Great Gatsby is a 1925 novel by American writer F. Scott Fitzgerald. Set in the Jazz Age on Long Island, near New York City, the novel depicts first-person narrator Nick Carraway's interactions with mysterious millionaire Jay Gatsby and Gatsby's obsession to reunite with his former lover, Daisy Buchanan.",
-	};
+	const {
+		data: book,
+		isLoading,
+		error,
+	} = useGetBookDetailsQuery({ id: id || '1' });
+
+	const { data: borrowHistory, isLoading: isHistoryLoading } =
+		useGetBookHistoryQuery({ id: id || '1' });
+
+	if (isLoading || isHistoryLoading) {
+		return (
+			<div className="flex justify-center items-center h-64">
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+			</div>
+		);
+	}
+
+	if (error || !book) {
+		return (
+			<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+				Error loading book. Please try again.
+			</div>
+		);
+	}
+
+	// Type assertion to ensure book has the correct structure
+	const typedBook = book as BookWithRelationsDto;
+	// Type assertion for borrow history
+	const typedBorrowHistory = borrowHistory as BorrowRecord[] | undefined;
+
+	const handleBorrowClick = (bookTitle: string) =>
+		navigate(`/borrow/?bookTitle=${bookTitle}`);
 
 	return (
 		<div className="space-y-6">
@@ -31,14 +57,14 @@ function BookDetail() {
 				</button>
 			</div>
 
-			<div className="bg-white rounded-lg shadow-lg p-8">
+			<div className="bg-white shadow-lg p-8">
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 					{/* Book Cover Placeholder */}
 					<div className="flex justify-center">
-						<div className="w-64 h-80 bg-gradient-to-br from-pink-100 to-green-100 rounded-lg flex items-center justify-center border-2 border-pink-200">
-							<div className="text-center text-pink-600">
-								<div className="text-6xl mb-2">📚</div>
-								<div className="text-sm font-medium">Book Cover</div>
+						<div className="w-64 h-80 bg-gradient-to-br from-pink-50 to-green-50 rounded-lg flex items-center justify-center border border-pink-200">
+							<div className="text-center">
+								<div className="text-7xl mb-2">📖</div>
+								<div className="text-pink-600 font-medium">Book Details</div>
 							</div>
 						</div>
 					</div>
@@ -47,11 +73,11 @@ function BookDetail() {
 					<div className="space-y-6">
 						<div>
 							<h1 className="text-4xl font-bold text-gray-800 mb-2">
-								{book.title}
+								{typedBook.title}
 							</h1>
 							<div className="flex items-center gap-2 text-gray-600">
 								<span>by</span>
-								{book.authors.map((author) => (
+								{typedBook.authors?.map((author: AuthorDto) => (
 									<span key={author.id} className="font-medium text-pink-600">
 										{author.fullName}
 									</span>
@@ -62,13 +88,15 @@ function BookDetail() {
 						<div className="space-y-4">
 							<div className="flex items-center gap-2">
 								<span className="text-gray-600 font-medium">ISBN:</span>
-								<span className="font-mono text-gray-800">{book.isbn}</span>
+								<span className="font-mono text-gray-800">
+									{typedBook.isbn}
+								</span>
 							</div>
 
 							<div className="flex items-center gap-2">
 								<span className="text-gray-600 font-medium">Published:</span>
 								<span className="text-gray-800">
-									{new Date(book.publishDate).toLocaleDateString('en-US', {
+									{new Date(typedBook.publishDate).toLocaleDateString('en-US', {
 										year: 'numeric',
 										month: 'long',
 										day: 'numeric',
@@ -78,16 +106,18 @@ function BookDetail() {
 
 							<div className="flex items-center gap-2">
 								<span className="text-gray-600 font-medium">Publisher:</span>
-								<span className="text-gray-800">{book.publisher.name}</span>
+								<span className="text-gray-800">
+									{typedBook.publisher?.name}
+								</span>
 								<span className="text-gray-500">
-									({book.publisher.establishedYear})
+									({typedBook.publisher?.establishedYear})
 								</span>
 							</div>
 
 							<div className="flex items-center gap-2">
 								<span className="text-gray-600 font-medium">Genres:</span>
 								<div className="flex gap-2">
-									{book.genres.map((genre) => (
+									{typedBook.genres?.map((genre: Genre) => (
 										<span
 											key={genre.id}
 											className="px-3 py-1 bg-pink-100 text-pink-800 text-sm rounded-full">
@@ -101,34 +131,26 @@ function BookDetail() {
 								<span className="text-gray-600 font-medium">Availability:</span>
 								<span
 									className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
-										book.copiesAvailable > 0
+										typedBook.copiesAvailable > 0
 											? 'bg-green-100 text-green-800'
 											: 'bg-red-100 text-red-800'
 									}`}>
-									{book.copiesAvailable} of {book.copiesTotal} copies available
+									{typedBook.copiesAvailable} of {typedBook.copiesTotal} copies
+									available
 								</span>
 							</div>
 						</div>
 
-						<div className="pt-4">
-							<h3 className="text-lg font-semibold text-gray-800 mb-2">
-								Description
-							</h3>
-							<p className="text-gray-700 leading-relaxed">
-								{book.description}
-							</p>
-						</div>
-
 						<div className="flex gap-4 pt-4">
 							<button
-								onClick={() => navigate(`/borrow/${book.id}`)}
-								disabled={book.copiesAvailable === 0}
+								onClick={() => handleBorrowClick(typedBook.title)}
+								disabled={typedBook.copiesAvailable === 0}
 								className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-									book.copiesAvailable > 0
+									typedBook.copiesAvailable > 0
 										? 'bg-green-500 text-white hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
 										: 'bg-gray-300 text-gray-500 cursor-not-allowed'
 								}`}>
-								{book.copiesAvailable > 0
+								{typedBook.copiesAvailable > 0
 									? 'Borrow This Book'
 									: 'Currently Unavailable'}
 							</button>
@@ -141,6 +163,92 @@ function BookDetail() {
 						</div>
 					</div>
 				</div>
+			</div>
+
+			{/* Borrow History Table */}
+			<div className="bg-white rounded-lg p-8">
+				<h2 className="text-2xl font-bold text-gray-800 mb-6">
+					Borrow History
+				</h2>
+				{typedBorrowHistory && typedBorrowHistory.length > 0 ? (
+					<div className="overflow-x-auto">
+						<table className="min-w-full divide-y divide-gray-200">
+							<thead className="bg-gradient-to-r from-pink-100 to-green-100">
+								<tr>
+									<th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+										Borrower
+									</th>
+									<th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+										Borrowed Date
+									</th>
+									<th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+										Returned Date
+									</th>
+									<th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+										Status
+									</th>
+								</tr>
+							</thead>
+							<tbody className="bg-white divide-y divide-gray-200">
+								{typedBorrowHistory.map(
+									(record: BorrowRecord, index: number) => (
+										<tr
+											key={index}
+											className="hover:bg-gray-50 transition-colors">
+											<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+												{record.borrower?.name || 'Unknown'}
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												{record.borrowedAt
+													? new Date(record.borrowedAt).toLocaleDateString(
+															'en-US',
+															{
+																year: 'numeric',
+																month: 'short',
+																day: 'numeric',
+															}
+														)
+													: 'N/A'}
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												{record.returnedAt
+													? new Date(record.returnedAt).toLocaleDateString(
+															'en-US',
+															{
+																year: 'numeric',
+																month: 'short',
+																day: 'numeric',
+															}
+														)
+													: 'Not returned'}
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap">
+												<span
+													className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+														record.returnedAt
+															? 'bg-green-100 text-green-800'
+															: 'bg-yellow-100 text-yellow-800'
+													}`}>
+													{record.returnedAt ? 'Returned' : 'Borrowed'}
+												</span>
+											</td>
+										</tr>
+									)
+								)}
+							</tbody>
+						</table>
+					</div>
+				) : (
+					<div className="text-center py-8">
+						<div className="text-gray-400 text-6xl mb-4">📚</div>
+						<p className="text-gray-500 text-lg">
+							No borrow history available for this book.
+						</p>
+						<p className="text-gray-400 text-sm mt-2">
+							This book hasn't been borrowed yet or history is not available.
+						</p>
+					</div>
+				)}
 			</div>
 		</div>
 	);
