@@ -34,12 +34,12 @@ export class BookAndUserCheckGuard implements CanActivate {
     }
 
     const user = await this.userRepository.findOne({
-      where: { name: parameters.userFullName },
+      where: { name: parameters.userName },
     });
 
     if (!user) {
       throw new BadRequestException(
-        `User with name ${parameters.userFullName} not found.`,
+        `User with name ${parameters.userName} not found.`,
       );
     }
 

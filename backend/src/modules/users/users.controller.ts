@@ -15,10 +15,10 @@ export class UsersController {
   ) {}
 
   //! remove it later
-  //   @Get()
-  //   getUsers() {
-  //     return this.userRepository.find();
-  //   }
+  @Get()
+  getUsers() {
+    return this.userRepository.find();
+  }
 
   @Post()
   @ApiOperation({

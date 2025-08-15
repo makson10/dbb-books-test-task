@@ -90,7 +90,6 @@ export class BooksController {
     return await this.booksRepository.save(book);
   }
 
-  @Get(':id')
   @ApiOperation({
     summary: 'Get details about specific book',
     tags: ['books'],
@@ -102,6 +101,7 @@ export class BooksController {
     description: 'Returns borrowing history for the book',
     type: BookWithRelationsDto,
   })
+  @Get(':id')
   getBookDetails(@Param('id') bookId: string) {
     return this.booksRepository.findOne({
       where: { id: parseInt(bookId) },
@@ -109,7 +109,6 @@ export class BooksController {
     });
   }
 
-  @Get(':id/history')
   @ApiOperation({
     summary: 'Get borrowing history for a specific book',
     tags: ['books'],
@@ -120,6 +119,7 @@ export class BooksController {
     status: 200,
     description: 'Returns borrowing history for the book',
   })
+  @Get(':id/history')
   getBookHistory(@Param('id') bookId: string) {
     return this.borrowRecordRepository.find({
       where: { bookId: parseInt(bookId) },

@@ -6,13 +6,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BorrowRecord } from '@/common/entities/borrow-record.entity';
 import { Repository } from 'typeorm';
@@ -31,12 +25,12 @@ export class BorrowController {
   ) {}
 
   //! remove it later
-  //   @Get()
-  //   async getBorrowRecords() {
-  //     return this.borrowRecordRepository.find({
-  //       relations: ['borrower', 'book'],
-  //     });
-  //   }
+  @Get()
+  async getBorrowRecords() {
+    return this.borrowRecordRepository.find({
+      relations: ['borrower', 'book'],
+    });
+  }
 
   @ApiOperation({
     summary: 'Borrow a book',
@@ -51,10 +45,7 @@ export class BorrowController {
   @ApiBody({ type: BorrowBookDto })
   @UseGuards(BookAndUserCheckGuard)
   @Post()
-  async borrowBook(
-    @Req()
-    request: Request & { book: Book; user: User },
-  ) {
+  async borrowBook(@Req() request: Request & { book: Book; user: User }) {
     const { book, user } = request;
 
     const userBorrowedBooksCount = await this.borrowRecordRepository.count({
@@ -69,7 +60,7 @@ export class BorrowController {
 
     const newBorrowRecord = this.borrowRecordRepository.create({
       borrower: user,
-      book: book,
+      book,
     });
 
     return this.borrowRecordRepository.save(newBorrowRecord);
