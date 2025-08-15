@@ -1,6 +1,6 @@
 import { BorrowRecord } from '@/common/entities/borrow-record.entity';
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Book } from '@/common/entities/book.entity';
@@ -17,6 +17,15 @@ export class BorrowReturnController {
   ) {}
 
   //! add check to ensure all date comparison is working okay
+  @ApiOperation({
+    summary: 'Check if user has borrowed a book and not returned it',
+    tags: ['return'],
+    operationId: 'checkIsUserBorrowBookAndDontReturn',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns borrowing status for the book and user',
+  })
   @UseGuards(BookAndUserCheckGuard)
   @Post()
   async checkIsUserBorrowBookAndDontReturn(

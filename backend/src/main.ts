@@ -14,8 +14,15 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
-  const documentFactory = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup(
+    'api',
+    app,
+    { ...document, openapi: '3.1.0' },
+    {
+      yamlDocumentUrl: '/api/schema.yaml',
+    },
+  );
 
   await app.listen(process.env.PORT ?? 4000);
 }

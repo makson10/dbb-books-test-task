@@ -1,6 +1,6 @@
 import { User, UserRole } from '@/common/entities/user.entity';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
@@ -15,13 +15,19 @@ export class UsersController {
   ) {}
 
   //! remove it later
-  @Get()
-  getUsers() {
-    return this.userRepository.find();
-  }
+  //   @Get()
+  //   getUsers() {
+  //     return this.userRepository.find();
+  //   }
 
   @Post()
-  //   createUser(@Body() newUser: UserDto) {
+  @ApiOperation({
+    summary: 'Create a new user',
+    tags: ['users'],
+    operationId: 'createUser',
+  })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  // change to Dto
   createUser() {
     const newUser: UserDto = {
       name: faker.person.fullName(),

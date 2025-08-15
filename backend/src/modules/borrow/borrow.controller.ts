@@ -6,7 +6,12 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BorrowRecord } from '@/common/entities/borrow-record.entity';
 import { Repository } from 'typeorm';
@@ -24,13 +29,23 @@ export class BorrowController {
   ) {}
 
   //! remove it later
-  @Get()
-  async getBorrowRecords() {
-    return this.borrowRecordRepository.find({
-      relations: ['borrower', 'book'],
-    });
-  }
+  //   @Get()
+  //   async getBorrowRecords() {
+  //     return this.borrowRecordRepository.find({
+  //       relations: ['borrower', 'book'],
+  //     });
+  //   }
 
+  @ApiOperation({
+    summary: 'Borrow a book',
+    tags: ['borrow'],
+    operationId: 'borrowBook',
+  })
+  @ApiResponse({ status: 201, description: 'Book borrowed successfully' })
+  @ApiResponse({
+    status: 400,
+    description: 'User has reached maximum limit of borrowed books',
+  })
   @UseGuards(BookAndUserCheckGuard)
   @Post()
   async borrowBook(

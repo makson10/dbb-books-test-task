@@ -1,6 +1,6 @@
 import { Publisher } from '@/common/entities/publisher.entity';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PublisherDto } from './dto/publisher.dto';
@@ -15,12 +15,24 @@ export class PublishersController {
   ) {}
 
   @Get()
+  @ApiOperation({
+    summary: 'Get all publishers',
+    tags: ['publishers'],
+    operationId: 'getAllPublishers',
+  })
+  @ApiResponse({ status: 200, description: 'Returns all available publishers' })
   getAllPublishers() {
     return this.publisherRepository.find();
   }
 
   @Post()
-  //   createPublisher(@Body() newPublisher: PublisherDto) {
+  @ApiOperation({
+    summary: 'Create a new publisher',
+    tags: ['publishers'],
+    operationId: 'createPublisher',
+  })
+  @ApiResponse({ status: 201, description: 'Publisher created successfully' })
+  // change to Dto
   createPublisher() {
     const newPublisher: PublisherDto = {
       name: faker.company.name(),

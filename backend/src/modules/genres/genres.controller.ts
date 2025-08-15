@@ -1,6 +1,6 @@
 import { Genre } from '@/common/entities/genre.entity';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GenreDto } from './dto/genre.dto';
@@ -15,12 +15,24 @@ export class GenresController {
   ) {}
 
   @Get()
+  @ApiOperation({
+    summary: 'Get all genres',
+    tags: ['genres'],
+    operationId: 'getGenres',
+  })
+  @ApiResponse({ status: 200, description: 'Returns all available genres' })
   getGenres() {
     return this.genreRepository.find();
   }
 
   @Post()
-  //   createGenres(@Body() newGenre: GenreDto) {
+  @ApiOperation({
+    summary: 'Create a new genre',
+    tags: ['genres'],
+    operationId: 'createGenre',
+  })
+  @ApiResponse({ status: 201, description: 'Genre created successfully' })
+  // change to Dto
   createGenres() {
     const newGenre: GenreDto = {
       name: faker.book.genre(),

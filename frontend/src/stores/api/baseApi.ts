@@ -1,0 +1,134 @@
+import { emptyApi as api } from "./emptyApi";
+export const addTagTypes = [
+  "books",
+  "authors",
+  "genres",
+  "publishers",
+  "borrow",
+  "return",
+  "users",
+] as const;
+const injectedRtkApi = api
+  .enhanceEndpoints({
+    addTagTypes,
+  })
+  .injectEndpoints({
+    endpoints: (build) => ({
+      getAllBooks: build.query<GetAllBooksApiResponse, GetAllBooksApiArg>({
+        query: (queryArg) => ({ url: `/books` }),
+        providesTags: ["books"],
+      }),
+      createBook: build.mutation<CreateBookApiResponse, CreateBookApiArg>({
+        query: () => ({ url: `/books`, method: "POST" }),
+        invalidatesTags: ["books"],
+      }),
+      getBookHistory: build.query<
+        GetBookHistoryApiResponse,
+        GetBookHistoryApiArg
+      >({
+        query: (queryArg) => ({ url: `/books/${queryArg.id}/history` }),
+        providesTags: ["books"],
+      }),
+      getAllAuthorBooks: build.query<
+        GetAllAuthorBooksApiResponse,
+        GetAllAuthorBooksApiArg
+      >({
+        query: (queryArg) => ({ url: `/authors/${queryArg.id}/books` }),
+        providesTags: ["authors"],
+      }),
+      createAuthor: build.mutation<CreateAuthorApiResponse, CreateAuthorApiArg>(
+        {
+          query: () => ({ url: `/authors`, method: "POST" }),
+          invalidatesTags: ["authors"],
+        },
+      ),
+      getGenres: build.query<GetGenresApiResponse, GetGenresApiArg>({
+        query: () => ({ url: `/genres` }),
+        providesTags: ["genres"],
+      }),
+      createGenre: build.mutation<CreateGenreApiResponse, CreateGenreApiArg>({
+        query: () => ({ url: `/genres`, method: "POST" }),
+        invalidatesTags: ["genres"],
+      }),
+      getAllPublishers: build.query<
+        GetAllPublishersApiResponse,
+        GetAllPublishersApiArg
+      >({
+        query: () => ({ url: `/publishers` }),
+        providesTags: ["publishers"],
+      }),
+      createPublisher: build.mutation<
+        CreatePublisherApiResponse,
+        CreatePublisherApiArg
+      >({
+        query: () => ({ url: `/publishers`, method: "POST" }),
+        invalidatesTags: ["publishers"],
+      }),
+      borrowBook: build.mutation<BorrowBookApiResponse, BorrowBookApiArg>({
+        query: () => ({ url: `/borrow`, method: "POST" }),
+        invalidatesTags: ["borrow"],
+      }),
+      checkIsUserBorrowBookAndDontReturn: build.mutation<
+        CheckIsUserBorrowBookAndDontReturnApiResponse,
+        CheckIsUserBorrowBookAndDontReturnApiArg
+      >({
+        query: () => ({ url: `/return`, method: "POST" }),
+        invalidatesTags: ["return"],
+      }),
+      createUser: build.mutation<CreateUserApiResponse, CreateUserApiArg>({
+        query: () => ({ url: `/users`, method: "POST" }),
+        invalidatesTags: ["users"],
+      }),
+    }),
+    overrideExisting: false,
+  });
+export { injectedRtkApi as baseApi };
+export type GetAllBooksApiResponse = unknown;
+export type GetAllBooksApiArg = {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  order?: string;
+};
+export type CreateBookApiResponse = unknown;
+export type CreateBookApiArg = void;
+export type GetBookHistoryApiResponse = unknown;
+export type GetBookHistoryApiArg = {
+  /** Book ID */
+  id: string;
+};
+export type GetAllAuthorBooksApiResponse = unknown;
+export type GetAllAuthorBooksApiArg = {
+  /** Author ID */
+  id: number;
+};
+export type CreateAuthorApiResponse = unknown;
+export type CreateAuthorApiArg = void;
+export type GetGenresApiResponse = unknown;
+export type GetGenresApiArg = void;
+export type CreateGenreApiResponse = unknown;
+export type CreateGenreApiArg = void;
+export type GetAllPublishersApiResponse = unknown;
+export type GetAllPublishersApiArg = void;
+export type CreatePublisherApiResponse = unknown;
+export type CreatePublisherApiArg = void;
+export type BorrowBookApiResponse = unknown;
+export type BorrowBookApiArg = void;
+export type CheckIsUserBorrowBookAndDontReturnApiResponse = unknown;
+export type CheckIsUserBorrowBookAndDontReturnApiArg = void;
+export type CreateUserApiResponse = unknown;
+export type CreateUserApiArg = void;
+export const {
+  useGetAllBooksQuery,
+  useCreateBookMutation,
+  useGetBookHistoryQuery,
+  useGetAllAuthorBooksQuery,
+  useCreateAuthorMutation,
+  useGetGenresQuery,
+  useCreateGenreMutation,
+  useGetAllPublishersQuery,
+  useCreatePublisherMutation,
+  useBorrowBookMutation,
+  useCheckIsUserBorrowBookAndDontReturnMutation,
+  useCreateUserMutation,
+} = injectedRtkApi;

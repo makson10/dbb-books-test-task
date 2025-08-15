@@ -8,18 +8,25 @@
 		"build": "tsc -b && vite build",
 		"build:start": "tsc -b && vite build && vite preview",
 		"lint": "eslint .",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"rtk-codegen": "npx @rtk-query/codegen-openapi openapi.config.ts"
 	},
 	"dependencies": {
+		"@reduxjs/toolkit": "^2.8.2",
+		"@rtk-query/codegen-openapi": "^2.0.0",
 		"@tailwindcss/vite": "^4.1.11",
+		"dotenv": "^17.2.1",
+		"esbuild-runner": "^2.2.2",
 		"react": "^19.1.1",
 		"react-dom": "^19.1.1",
+		"react-redux": "^9.2.0",
 		"react-router": "^7.8.0",
 		"tailwindcss": "^4.1.11",
 		"vite-tsconfig-paths": "^5.1.4"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.32.0",
+		"@types/node": "^24.2.1",
 		"@types/react": "^19.1.9",
 		"@types/react-dom": "^19.1.7",
 		"@vitejs/plugin-react": "^4.7.0",
