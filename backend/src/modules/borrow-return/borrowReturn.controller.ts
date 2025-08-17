@@ -17,7 +17,6 @@ export class BorrowReturnController {
     private borrowRecordRepository: Repository<BorrowRecord>,
   ) {}
 
-  //! add check to ensure all date comparison is working okay
   @ApiOperation({
     summary: 'Check if user has borrowed a book and not returned it',
     tags: ['return'],
@@ -33,7 +32,7 @@ export class BorrowReturnController {
   async checkIsUserBorrowBookAndDontReturn(
     @Req()
     request: Request & { book: Book; user: User },
-  ) {
+  ): Promise<{ wasBorrowedAndNoReturned: boolean }> {
     const { book, user } = request;
 
     const borrowRecord = await this.borrowRecordRepository.findOne({

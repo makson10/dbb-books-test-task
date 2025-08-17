@@ -1,1 +1,12 @@
 @import 'tailwindcss';
+
+a[href]:not([href^='#']),
+[role='link'] {
+	cursor: pointer;
+}
+
+button:not([disabled]),
+input[type='button']:not([disabled]),
+input[type='submit']:not([disabled]) {
+	cursor: pointer;
+}

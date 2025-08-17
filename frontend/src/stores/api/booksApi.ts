@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { BookWithRelationsDto } from './baseApi';
+import type { AuthorDto, Genre, PublisherDto } from './baseApi';
+import { baseApi as api } from './baseApi';
 
 export interface GetBooksParams {
 	page?: number;
@@ -12,10 +12,20 @@ export interface BookCountResponse {
 	count: number;
 }
 
-export const booksApi = createApi({
-	reducerPath: 'booksApi',
-	baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_SERVER_BASE_URL }),
-	tagTypes: ['books'],
+export type BookWithRelationsDto = {
+	id: number;
+	title: string;
+	isbn: string;
+	publishDate: string;
+	copiesTotal: number;
+	copiesAvailable: number;
+	publisherId: number;
+	publisher: PublisherDto;
+	authors: AuthorDto[];
+	genres: Genre[];
+};
+
+export const booksApi = api.injectEndpoints({
 	endpoints: (build) => ({
 		getBooks: build.query<BookWithRelationsDto[], GetBooksParams>({
 			query: (params) => {
@@ -42,6 +52,7 @@ export const booksApi = createApi({
 			providesTags: ['books'],
 		}),
 	}),
+	overrideExisting: true,
 });
 
 export const { useGetBooksQuery, useGetBookCountQuery } = booksApi;

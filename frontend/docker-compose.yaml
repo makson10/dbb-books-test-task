@@ -4,9 +4,3 @@ services:
     container_name: frontend
     ports:
       - '${PORT}:${PORT}'
-    # develop: 
-    #   watch:
-    #     - path: ./src
-    #       action: sync
-    #     - path: ./package.json
-    #       action: rebuild

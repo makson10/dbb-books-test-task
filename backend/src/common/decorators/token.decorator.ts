@@ -7,6 +7,8 @@ import {
 export const Token = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
+    if (request.token) return request.token;
+
     const authHeader = request.headers.authorization;
     if (!authHeader)
       throw new BadRequestException('Authorization header is missing');

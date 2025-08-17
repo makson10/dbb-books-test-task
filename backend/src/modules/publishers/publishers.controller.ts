@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PublisherDto } from './dto/publisher.dto';
-import { faker } from '@faker-js/faker';
 import { UserRole } from '@/common/entities/user.entity';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/common/guard/jwt-auth.guard';
@@ -32,7 +31,7 @@ export class PublishersController {
     operationId: 'getAllPublishers',
   })
   @ApiResponse({ status: 200, description: 'Returns all available publishers' })
-  getAllPublishers() {
+  getAllPublishers(): Promise<Publisher[]> {
     return this.publisherRepository.find();
   }
 

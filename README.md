@@ -1,313 +1,148 @@
-# DBB Books Library Management System
+[newline]
 
-A modern full-stack library management system built with NestJS and React that allows users to browse books, view detailed information, and manage book borrowing operations.
+# DBB Books — Library Management (NestJS + React)
 
-## 📚 Features
+A compact, developer-focused README for the DBB Books test task repository. This project contains a NestJS backend and a React + Vite frontend for managing books, authors, publishers, genres and borrow operations.
 
-- **Book Management**: Browse books with pagination and sorting
-- **Book Details**: View comprehensive book information including authors, publishers, and genres
-- **Borrow System**: Request and track book borrowing
-- **History Tracking**: View borrowing history for each book
-- **Responsive Design**: Modern UI built with Tailwind CSS
-- **API Documentation**: Interactive Swagger/OpenAPI documentation
+## Key points
 
-## 🛠 Technology Stack
+- Backend: NestJS + TypeORM + PostgreSQL
+- Frontend: React + TypeScript + Vite (RTK Query for API)
+- Docker-first setup for easy local development
 
-### Backend
+## Quick start (recommended — Docker)
 
-- **NestJS** - Progressive Node.js framework
-- **TypeORM** - Object-Relational Mapping
-- **PostgreSQL** - Primary database
-- **Swagger/OpenAPI** - API documentation
-- **Class Validator** - Data validation
-- **Faker.js** - Test data generation
-
-### Frontend
-
-- **React 19** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **Redux Toolkit Query** - State management and API calls
-- **React Router** - Client-side routing
-- **React Hook Form + Yup** - Form handling and validation
-- **Tailwind CSS** - Utility-first CSS framework
-
-### DevOps
-
-- **Docker & Docker Compose** - Containerization
-- **PostgreSQL** - Database container
-
-## 📋 Prerequisites
-
-- **Node.js** (v18 or higher)
-- **npm** or **yarn**
-- **Docker** and **Docker Compose**
-- **Git**
-
-## 🚀 Getting Started
-
-### 1. Clone the Repository
+1. From repo root, start everything with Docker Compose:
 
 ```bash
 git clone https://github.com/makson10/dbb-books-test-task.git
-cd dbb-books-test-task
+docker-compose up --build
 ```
 
-### 2. Environment Setup
+2. Open:
 
-The project includes example environment files for easier testing:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:4000
+- API docs (Swagger): http://localhost:4000/api
 
-**Backend Environment** (`.env` in `/backend`):
-
-```bash
-SERVER_PORT=4000
-POSTGRES_PORT=5432
-POSTGRES_HOST="db"
-POSTGRES_DB="postgres"
-POSTGRES_USER="postgres"
-POSTGRES_PASSWORD="dbb_test_task"
-```
-
-**Frontend Environment** (`.env` in `/frontend`):
+Tip: to bring services down and remove volumes (reset DB):
 
 ```bash
-PORT=3000
-VITE_SERVER_BASE_URL="http://127.0.0.1:4000"
-```
-
-### 3. Using Docker (Recommended)
-
-#### Start the complete application:
-
-```bash
-# From the root directory
-docker-compose up
-```
-
-This will start:
-
-- PostgreSQL database on port 5432
-- Backend API on port 4000
-- Frontend on port 3000
-
-#### Or start services individually:
-
-```bash
-# Start backend with database
 cd backend
-docker-compose up
-
-# Start frontend (in a new terminal)
-cd frontend
-docker-compose up
+docker-compose down -v
+cd ..
+docker-compose up -d
 ```
 
-### 4. Manual Setup (Alternative)
+## Local development (without Docker)
 
-#### Backend Setup:
+Backend
 
 ```bash
 cd backend
 npm install
-# Make sure PostgreSQL is running locally or update .env
+# ensure a PostgreSQL instance is available and .env is configured
 npm run start:dev
 ```
 
-#### Frontend Setup:
+Frontend
 
 ```bash
 cd frontend
 npm install
 npm run dev
-```
-
-### 5. Access the Application
-
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:4000
-- **API Documentation**: http://localhost:4000/api
-
-## 📖 API Documentation
-
-The API documentation is automatically generated using Swagger/OpenAPI and is available at:
 
 ```
-http://localhost:4000/api
-```
 
-### Key API Endpoints
+## Useful scripts
 
-#### Books
+From `backend/`:
 
-- `GET /books` - Get all books with pagination and sorting
-- `GET /books/count` - Get total book count
-- `GET /books/:id` - Get book details
-- `GET /books/:id/history` - Get book borrowing history
-- `POST /books` - Create a new book (generates fake data)
+- npm run start:dev — start NestJS with hot reload
+- npm run test — run backend unit tests
 
-#### Authors
+From `frontend/`:
 
-- `GET /authors` - Get all authors
-- `GET /authors/:id/books` - Get books by author
-- `POST /authors` - Create a new author
+- npm run dev — start Vite dev server
+- npm run rtk-codegen — regenerate API types from backend OpenAPI
 
-#### Publishers
+## API surface (high level)
 
-- `GET /publishers` - Get all publishers
-- `POST /publishers` - Create a new publisher
+Main endpoints (example):
 
-#### Genres
+- GET /books — list books (pagination + sorting)
+- GET /books/:id — book details
+- GET /books/:id/history — borrow history
+- POST /borrow — create borrow record
+- POST /return — return a book
+- GET /authors, POST /authors
+- GET /publishers, POST /publishers
+- GET /genres, POST /genres
 
-- `GET /genres` - Get all genres
-- `POST /genres` - Create a new genre
+For full API reference use the Swagger UI at `/api` on the running backend.
 
-#### Borrow Operations
+## Generate frontend types from OpenAPI
 
-- `POST /borrow` - Borrow a book
-- `GET /borrow` - Get borrow records
-- `POST /return` - Return a borrowed book
-
-## 🏗 Project Structure
-
-```
-dbb-books-test-task/
-├── backend/                 # NestJS API
-│   ├── src/
-│   │   ├── common/         # Shared entities and utilities
-│   │   │   └── entities/   # TypeORM entities
-│   │   ├── modules/        # Feature modules
-│   │   │   ├── books/
-│   │   │   ├── authors/
-│   │   │   ├── publishers/
-│   │   │   ├── genres/
-│   │   │   ├── borrow/
-│   │   │   └── users/
-│   │   ├── app.module.ts   # Main application module
-│   │   └── main.ts        # Application entry point
-│   ├── docker-compose.yaml
-│   └── package.json
-├── frontend/               # React application
-│   ├── src/
-│   │   ├── assets/        # Routes and validation schemas
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Page components
-│   │   │   ├── booksList/     # Books listing page
-│   │   │   ├── bookDetail/    # Book details page
-│   │   │   └── borrowPage/    # Book borrowing form
-│   │   ├── stores/        # Redux store and API
-│   │   │   └── api/       # RTK Query API definitions
-│   │   ├── styles/        # CSS styles
-│   │   ├── types/         # TypeScript type definitions
-│   │   └── main.tsx       # Application entry point
-│   ├── docker-compose.yaml
-│   └── package.json
-└── docker-compose.yaml     # Root compose file
-```
-
-## Generate API types from OpenAPI
-
-The frontend uses RTK Query with auto-generated types from the backend OpenAPI schema:
+If you change the backend API schema, regenerate types used by RTK Query:
 
 ```bash
 cd frontend
 npm run rtk-codegen
 ```
 
-This will update `/src/stores/api/baseApi.ts` with the latest API definitions.
+This updates generated API typings under `frontend/src/stores/api`.
 
-## 🎯 Usage
+## Tests
 
-### Browsing Books
+- Backend unit tests: `cd backend && npm run test`
+- Frontend tests: uses Vitest testing config (refer to `frontend/vitest.config.ts`)
 
-1. Visit the homepage to see the books list
-2. Use pagination controls to navigate through pages
-3. Sort books by different criteria
-4. Click on a book title to view detailed information
+## Project layout
 
-### Borrowing Books
+- backend/ — NestJS API (src/, Dockerfile, docker-compose.yaml)
+- frontend/ — React + Vite app (src/, Dockerfile, docker-compose.yaml)
+- docker-compose.yaml — root compose to run everything together
 
-1. From the books list, click "Borrow" on available books
-2. Fill out the borrowing form with your name and book title
-3. Submit the form to complete the borrowing process
+## Database schema
 
-### Viewing Book Details
+### Schema
 
-1. Click on any book title to view detailed information
-2. See book metadata (ISBN, publish date, authors, etc.)
-3. View the borrowing history for that book
+- Book: id, title, isbn (unique), publishDate — relations: authors, genres, publisher, borrow records
+- Author: id, firstName, lastName — relations: books
+- Publisher: id, name (unique) — relations: books
+- Genre: id, name (unique) — relations: books
+- User: id, email (unique), passwordHash, role — relations: borrow records
+- BorrowRecord: id, userId, bookId, borrowDate, dueDate, returnDate, status
+  Relations (brief)
 
-## 🧪 Testing
+### Relations
 
-### Backend Tests
+- Book ↔ Author — many-to-many (join table, e.g. book_authors). Books can have many authors; authors can have many books.
+- Book ↔ Genre — many-to-many (join table, e.g. book_genres). Books can belong to many genres; genres contain many books.
+- Book → Publisher — many-to-one. Each book has one publisher; a publisher has many books.
+- Book → BorrowRecord — one-to-many. A book can have many borrow records (history).
+- User → BorrowRecord — one-to-many. A user can have many borrow records.
+- BorrowRecord → Book and BorrowRecord → User — many-to-one FKs to books and users. Fields include borrowDate, dueDate, returnDate, status.
 
-```bash
-cd backend
-npm run test              # Unit tests
-```
+## Deliverables Checklist
 
-### Frontend Tests
+1.Backend REST endpoints (above) &#10004; <br />
+2.DTO validations (ISBN, dates, uniqueness, limits) &#10004; <br />
+3.DB schema with relations (diagram or README description) &#10004; <br />
+4.Tests (unit / e2e) &#10004; <br />
+5.Swagger or Postman collection &#10004; <br />
+6.Front-end SPA (React or Vue) with pages listed &#10004; <br />
+7.README: run steps for API & UI, decisions made &#10004; <br />
+8.(Bonus) Auth & RBAC &#10004; <br />
+9.(Bonus) GraphQL layer <br />
+10.(Bonus) Docker & CI &#10004; <br />
 
-The frontend uses Vite's testing capabilities. Tests can be added using your preferred testing framework.
+## Decisions
 
-## 🔒 Environment Variables
+### DB
 
-### Backend (.env)
+PostgreSQL is the best choice for this project because it ensures reliable relational integrity, supports powerful indexing and complex queries, and integrates seamlessly with TypeORM/NestJS and Docker. I didn't choose NoSQL due to using relationships in the project's database schema, and PostgreSQL is the most popular and well-supported solution for this needs.
 
-- `SERVER_PORT`: Backend server port (default: 4000)
-- `POSTGRES_HOST`: PostgreSQL host (default: "db" for Docker)
-- `POSTGRES_PORT`: PostgreSQL port (default: 5432)
-- `POSTGRES_DB`: Database name
-- `POSTGRES_USER`: Database username
-- `POSTGRES_PASSWORD`: Database password
+### Expose ENV
 
-### Frontend (.env)
-
-- `PORT`: Frontend development server port (default: 3000)
-- `VITE_SERVER_BASE_URL`: Backend API base URL
-
-## 🐳 Docker Information
-
-### Individual Services
-
-Each service has its own Dockerfile and docker-compose.yaml:
-
-- **Backend**: Includes PostgreSQL database
-- **Frontend**: Standalone React application
-
-### Development with Docker
-
-Use Docker Compose watch mode for development:
-
-```bash
-# Backend with hot reload
-cd backend
-docker-compose up --watch
-
-# Frontend (if applicable)
-cd frontend
-docker-compose up
-```
-
-### Database Reset
-
-To reset the database:
-
-```bash
-cd backend
-docker-compose down -v  # Remove volumes
-docker-compose up       # Restart with fresh database
-```
-
-### Logs
-
-View application logs:
-
-```bash
-# Backend logs
-cd backend
-docker-compose logs -f
-
-# Frontend logs
-cd frontend
-docker-compose logs -f
-```
+Environment variables exposed in order to provide to simplify testing and let reviewers run the project quickly. Override defaults with `backend/.env`, `frontend/.env`, or CI/shell envs. These values are for local testing only; use `.env.sample` and keep `*.env` in `.gitignore` for production.

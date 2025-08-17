@@ -13,6 +13,8 @@ import { BorrowRecord } from '@/common/entities/borrow-record.entity';
 import { User } from '@/common/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './common/guard/jwt-auth.guard';
 import { BorrowReturnModule } from './modules/borrow-return/borrowReturn.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -27,6 +29,7 @@ dotenv.config();
     BorrowModule,
     BorrowReturnModule,
     UsersModule,
+    AuthModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -39,6 +42,6 @@ dotenv.config();
     }),
   ],
   controllers: [],
-  providers: [],
+  providers: [JwtAuthGuard],
 })
 export class AppModule {}

@@ -1,8 +1,8 @@
 import { type PropsWithChildren, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useAppDispatch } from './hooks';
-import { useVerifyTokenMutation } from './api/baseApi';
-import { setUser, clearUser } from './userSlice';
+import { useVerifyTokenMutation } from './api/authApi';
+import { setUser, clearUser } from './slices/userSlice';
 
 export default function UserProvider({ children }: PropsWithChildren) {
 	const dispatch = useAppDispatch();
@@ -14,9 +14,7 @@ export default function UserProvider({ children }: PropsWithChildren) {
 
 		(async () => {
 			try {
-				const res = await verifyToken({
-					authorization: `Bearer ${token}`,
-				}).unwrap();
+				const res = await verifyToken(token).unwrap();
 				dispatch(setUser(res));
 			} catch {
 				dispatch(clearUser());

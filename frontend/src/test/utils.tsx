@@ -4,16 +4,14 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { baseApi } from '../stores/api';
-import { booksApi } from '../stores/api/booksApi';
 
 export const createTestStore = () => {
 	return configureStore({
 		reducer: {
 			[baseApi.reducerPath]: baseApi.reducer,
-			[booksApi.reducerPath]: booksApi.reducer,
 		},
 		middleware: (getDefaultMiddleware) =>
-			getDefaultMiddleware().concat(baseApi.middleware, booksApi.middleware),
+			getDefaultMiddleware().concat(baseApi.middleware),
 	});
 };
 

@@ -1,5 +1,5 @@
 import { Book } from '@/common/entities/book.entity';
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -70,17 +70,7 @@ export class BooksController {
     operationId: 'createBook',
   })
   @ApiResponse({ status: 201, description: 'Book created successfully' })
-  // change to Dto
-  async createBook() {
-    const newBook: Omit<BookDto, 'id'> = {
-      title: faker.book.title(),
-      copiesAvailable: faker.number.int({ min: 1, max: 100 }),
-      copiesTotal: faker.number.int({ min: 1, max: 100 }),
-      isbn: faker.commerce.isbn(),
-      publishDate: faker.date.past(),
-      publisherId: faker.number.int({ min: 1, max: 3 }),
-    };
-
+  async createBook(@Body() newBook: Omit<BookDto, 'id'>): Promise<Book> {
     const author = await this.authorRepository.findOne({ where: { id: 1 } });
 
     const book = this.booksRepository.create({
@@ -102,7 +92,7 @@ export class BooksController {
     type: BookWithRelationsDto,
   })
   @Get(':id')
-  getBookDetails(@Param('id') bookId: string) {
+  getBookDetails(@Param('id') bookId: string): Promise<Book | null> {
     return this.booksRepository.findOne({
       where: { id: parseInt(bookId) },
       relations: ['authors', 'publisher', 'genres'],
@@ -120,7 +110,7 @@ export class BooksController {
     description: 'Returns borrowing history for the book',
   })
   @Get(':id/history')
-  getBookHistory(@Param('id') bookId: string) {
+  getBookHistory(@Param('id') bookId: string): Promise<BorrowRecord[]> {
     return this.borrowRecordRepository.find({
       where: { bookId: parseInt(bookId) },
       relations: ['borrower'],

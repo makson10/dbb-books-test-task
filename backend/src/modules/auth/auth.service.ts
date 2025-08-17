@@ -17,9 +17,13 @@ export class AuthService {
   }
 
   validateToken(token: string) {
-    const payload = this.jwtService.verify(token, {
-      secret: process.env.JWT_SECRET,
-    });
-    return { id: payload.sub, name: payload.name, role: payload.role };
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      return { id: payload.sub, name: payload.name, role: payload.role };
+    } catch {
+      return null;
+    }
   }
 }

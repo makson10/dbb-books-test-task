@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { store } from '../store';
 import { baseApi } from '../api';
 import { booksApi } from '../api/booksApi';
+import { adminApi } from '../api/adminApi';
 
 describe('Redux Store', () => {
 	it('should have the correct initial state structure', () => {
@@ -9,6 +10,7 @@ describe('Redux Store', () => {
 
 		expect(state).toHaveProperty(baseApi.reducerPath);
 		expect(state).toHaveProperty(booksApi.reducerPath);
+		expect(state).toHaveProperty(adminApi.reducerPath);
 	});
 
 	it('should have baseApi reducer', () => {

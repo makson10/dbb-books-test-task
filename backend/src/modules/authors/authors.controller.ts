@@ -9,8 +9,6 @@ import {
 } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AuthorDto } from './dto/author.dto';
-import { faker } from '@faker-js/faker';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { UserRole } from '@/common/entities/user.entity';
@@ -25,12 +23,6 @@ export class AuthorsController {
     @InjectRepository(Author) private authorsRepository: Repository<Author>,
   ) {}
 
-  //! remove it later
-  @Get()
-  getAllAuthors() {
-    return this.authorsRepository.find();
-  }
-
   @ApiOperation({
     summary: 'Get all books by author ID',
     tags: ['authors'],
@@ -42,7 +34,7 @@ export class AuthorsController {
     description: 'Returns books for the specified author',
   })
   @Get('/:id/books')
-  getAllAuthorBooks(@Param('id') id: number) {
+  getAllAuthorBooks(@Param('id') id: number): Promise<Author[]> {
     return this.authorsRepository.find({
       where: { id },
       relations: ['books'],
@@ -60,7 +52,7 @@ export class AuthorsController {
   @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, UserGuard, RolesGuard)
   @Post()
-  createAuthor(@Body() newAuthor: CreateAuthorDto) {
+  createAuthor(@Body() newAuthor: CreateAuthorDto): Promise<Author> {
     const author = this.authorsRepository.create(newAuthor);
     return this.authorsRepository.save(author);
   }

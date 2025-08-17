@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GenreDto } from './dto/genre.dto';
-import { faker } from '@faker-js/faker';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { UserRole } from '@/common/entities/user.entity';
@@ -32,7 +31,7 @@ export class GenresController {
     operationId: 'getGenres',
   })
   @ApiResponse({ status: 200, description: 'Returns all available genres' })
-  getGenres() {
+  getGenres(): Promise<Genre[]> {
     return this.genreRepository.find();
   }
 

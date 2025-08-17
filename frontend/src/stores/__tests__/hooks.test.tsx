@@ -5,16 +5,16 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { baseApi } from '../api';
 import { booksApi } from '../api/booksApi';
+import { adminApi } from '../api/adminApi';
 
 // Create a test store
 const createTestStore = () => {
 	return configureStore({
 		reducer: {
 			[baseApi.reducerPath]: baseApi.reducer,
-			[booksApi.reducerPath]: booksApi.reducer,
 		},
 		middleware: (getDefaultMiddleware) =>
-			getDefaultMiddleware().concat(baseApi.middleware, booksApi.middleware),
+			getDefaultMiddleware().concat(baseApi.middleware),
 	});
 };
 
@@ -58,6 +58,8 @@ describe('Redux Hooks', () => {
 			const state = result.current;
 			expect(state).toHaveProperty(baseApi.reducerPath);
 			expect(state).toHaveProperty(booksApi.reducerPath);
+			// adminApi injects into baseApi, ensure its reducerPath is present as well
+			expect(state).toHaveProperty(adminApi.reducerPath);
 		});
 
 		it('should select specific state slices', () => {

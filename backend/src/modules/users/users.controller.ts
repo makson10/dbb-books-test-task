@@ -1,12 +1,5 @@
 import { User } from '@/common/entities/user.entity';
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Post,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -34,12 +27,6 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
-  //! remove it later
-  @Get()
-  getUsers() {
-    return this.userRepository.find();
-  }
-
   @ApiOperation({
     summary: 'Create a new user',
     tags: ['users'],
@@ -63,8 +50,11 @@ export class UsersController {
     const savedUser = await this.userRepository.save(user);
     const token = this.authService.generateToken(savedUser);
 
+    const safeUser = { ...savedUser } as any;
+    delete safeUser.password;
+
     return {
-      user: savedUser,
+      user: safeUser as User,
       token,
     };
   }
@@ -105,8 +95,11 @@ export class UsersController {
 
     const token = this.authService.generateToken(user);
 
+    const safeUser = { ...user } as any;
+    delete safeUser.password;
+
     return {
-      user,
+      user: safeUser as User,
       token,
     };
   }
@@ -129,9 +122,7 @@ export class UsersController {
   @Post('verify')
   verifyToken(@Token() token: string): TokenPayloadDto {
     const payload = this.authService.validateToken(token);
-    if (!payload) {
-      throw new UnauthorizedException('Invalid token');
-    }
+    if (!payload) throw new UnauthorizedException('Invalid token');
     return payload;
   }
 }

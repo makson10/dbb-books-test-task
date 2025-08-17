@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Controller,
-  Get,
   Post,
   Req,
   UseGuards,
@@ -24,14 +23,6 @@ export class BorrowController {
     private borrowRecordRepository: Repository<BorrowRecord>,
   ) {}
 
-  //! remove it later
-  @Get()
-  async getBorrowRecords() {
-    return this.borrowRecordRepository.find({
-      relations: ['borrower', 'book'],
-    });
-  }
-
   @ApiOperation({
     summary: 'Borrow a book',
     tags: ['borrow'],
@@ -45,7 +36,9 @@ export class BorrowController {
   @ApiBody({ type: BorrowBookDto })
   @UseGuards(BookAndUserCheckGuard)
   @Post()
-  async borrowBook(@Req() request: Request & { book: Book; user: User }) {
+  async borrowBook(
+    @Req() request: Request & { book: Book; user: User },
+  ): Promise<BorrowRecord> {
     const { book, user } = request;
 
     const userBorrowedBooksCount = await this.borrowRecordRepository.count({

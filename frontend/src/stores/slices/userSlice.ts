@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { TokenPayloadDto } from '@/stores/api/baseApi';
+import type { TokenPayloadDto } from '@/stores/api/authApi';
 
 export interface UserState {
 	user: TokenPayloadDto | null;
