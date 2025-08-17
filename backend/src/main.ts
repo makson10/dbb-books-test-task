@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle('DBB-books')
     .setDescription('API for DBB-books')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

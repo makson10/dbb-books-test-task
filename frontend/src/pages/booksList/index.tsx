@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetBooksQuery, useGetBookCountQuery } from '@/stores/api/booksApi';
 import type { Order, SortBy } from '@/types/book.types';
+import { useAppSelector, useAppDispatch } from '@/stores/hooks';
+import { clearUser } from '@/stores/userSlice';
+import Cookies from 'js-cookie';
 
 function BooksList() {
 	const navigate = useNavigate();
@@ -10,6 +13,10 @@ function BooksList() {
 	const [sortBy, setSortBy] = useState<SortBy>('title');
 	const [order, setOrder] = useState<Order>('asc');
 	const limit = 10;
+	const user = useAppSelector((s) => s.user?.user);
+	const dispatch = useAppDispatch();
+	const [showUserMenu, setShowUserMenu] = useState(false);
+	const menuRef = useRef<HTMLDivElement | null>(null);
 
 	const {
 		data: books,
@@ -33,6 +40,27 @@ function BooksList() {
 	useEffect(() => {
 		refetch();
 	}, [refetch, currentPage, sortBy, order]);
+
+	// close dropdown when clicking outside or pressing Escape
+	useEffect(() => {
+		function handleClickOutside(e: MouseEvent) {
+			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+				setShowUserMenu(false);
+			}
+		}
+
+		function handleKey(e: KeyboardEvent) {
+			if (e.key === 'Escape') setShowUserMenu(false);
+		}
+
+		document.addEventListener('mousedown', handleClickOutside);
+		document.addEventListener('keydown', handleKey);
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+			document.removeEventListener('keydown', handleKey);
+		};
+	}, []);
 
 	if (isLoading || isCountLoading) {
 		return (
@@ -61,7 +89,43 @@ function BooksList() {
 		<div className="p-12">
 			<div className="space-y-6">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-					<h1 className="text-3xl font-bold text-gray-800">Books Library</h1>
+					<div className="flex items-center gap-3">
+						{!user ? (
+							<button
+								onClick={() => navigate('/login')}
+								className="px-3 py-1 bg-pink-600 hover:bg-pink-800 text-white font-medium rounded-lg hover:underline cursor-pointer">
+								Log in
+							</button>
+						) : (
+							<div className="relative flex flex-col justify-center" ref={menuRef}>
+								<button
+									onClick={() => setShowUserMenu((s) => !s)}
+									className="cursor-pointer focus:outline-none">
+									<img
+										src="https://img.icons8.com/ios-filled/200/user-male-circle.png"
+										alt="user"
+										className="w-10 h-10 rounded-full"
+									/>
+								</button>
+
+								{showUserMenu && (
+									<div className="absolute top-full mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-50">
+										<button
+											onClick={() => {
+												Cookies.remove('token', { path: '/' });
+												dispatch(clearUser());
+												navigate('/');
+											}}
+											className="w-full text-left px-4 py-2 text-black hover:bg-gray-100">
+											Log out
+										</button>
+									</div>
+								)}
+							</div>
+						)}
+
+						<h1 className="text-3xl font-bold text-gray-800">Books Library</h1>
+					</div>
 					<div className="flex flex-col sm:flex-row gap-3">
 						<div className="relative">
 							<input

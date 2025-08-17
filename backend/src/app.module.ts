@@ -14,6 +14,8 @@ import { User } from '@/common/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { BorrowReturnModule } from './modules/borrow-return/borrowReturn.module';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [

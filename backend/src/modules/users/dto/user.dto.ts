@@ -1,9 +1,19 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
-import { IsString, IsEmail, IsEnum, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsNumber,
+} from 'class-validator';
 import { UserRole } from '@/common/entities/user.entity';
 
 @ApiSchema()
 export class UserDto {
+  @ApiProperty()
+  @IsNumber()
+  id: number;
+
   @ApiProperty()
   @IsString()
   name: string;
@@ -16,4 +26,8 @@ export class UserDto {
   @IsOptional()
   @IsEnum(UserRole)
   role: UserRole = UserRole.USER;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
 }

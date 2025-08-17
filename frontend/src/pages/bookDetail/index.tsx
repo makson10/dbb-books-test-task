@@ -52,8 +52,8 @@ function BookDetail() {
 			<div className="flex items-center gap-4">
 				<button
 					onClick={() => navigate('/')}
-					className="px-4 py-2 text-pink-600 hover:text-pink-800 font-medium hover:underline flex items-center gap-2">
-					← Back to Books
+					className="px-4 py-2 text-pink-600 hover:text-pink-800 font-medium hover:underline flex items-center gap-2 cursor-pointer">
+					0 Back to Books
 				</button>
 			</div>
 
@@ -157,7 +157,7 @@ function BookDetail() {
 
 							<button
 								onClick={() => navigate('/')}
-								className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-pink-500 focus:ring-offset-2">
+								className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 cursor-pointer">
 								Browse More Books
 							</button>
 						</div>

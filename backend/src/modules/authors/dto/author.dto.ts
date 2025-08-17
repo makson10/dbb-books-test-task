@@ -1,5 +1,5 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
-import { IsString, IsDate, Validate, IsNumber } from 'class-validator';
+import { IsString, Validate, IsNumber, IsDateString } from 'class-validator';
 
 @ApiSchema()
 export class AuthorDto {
@@ -12,7 +12,7 @@ export class AuthorDto {
   fullName: string;
 
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   @Validate((value) => value < new Date(), {
     message: 'birthDate must be in the past',
   })

@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { borrowSchema, type BorrowFormData } from '@/assets/validationSchema';
+import { borrowSchema, type BorrowFormData } from '@/assets/validationSchemas/borrow';
 import { useBorrowBookMutation } from '@/stores/api/baseApi';
 import { useEffect, useState } from 'react';
 import { ErrorNotification } from '@/components/ErrorNotification';
+import { useAppSelector } from '@/stores/hooks';
 
 function BorrowPage() {
 	const navigate = useNavigate();
@@ -12,6 +13,7 @@ function BorrowPage() {
 	const [borrowBook, { isLoading: isBorrowing }] = useBorrowBookMutation();
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [showError, setShowError] = useState(false);
+	const { user: loggedInUser } = useAppSelector((state) => state.user);
 
 	const {
 		register,
@@ -56,13 +58,18 @@ function BorrowPage() {
 		}
 	}, [searchParams]);
 
+	useEffect(() => {
+		if (!loggedInUser?.name) return undefined;
+		setValue('userName', loggedInUser.name);
+	}, [loggedInUser]);
+
 	return (
 		<div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
 			<div className="flex items-center gap-4">
 				<button
 					onClick={() => navigate('/')}
-					className="px-4 py-2 text-pink-600 hover:text-pink-800 font-medium hover:underline flex items-center gap-2">
-					← Back to Books
+					className="px-4 py-2 text-pink-600 hover:text-pink-800 font-medium hover:underline flex items-center gap-2 cursor-pointer">
+					0 Back to Books
 				</button>
 			</div>
 			<div className="max-w-md mx-auto relative">
