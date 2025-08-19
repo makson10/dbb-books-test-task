@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { UserRole } from '@/common/entities/user.entity';
 
-@ApiSchema()
+@ApiSchema({ name: 'User' })
 export class UserDto {
   @ApiProperty()
   @IsNumber()

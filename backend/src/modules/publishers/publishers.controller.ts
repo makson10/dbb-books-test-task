@@ -30,8 +30,12 @@ export class PublishersController {
     tags: ['publishers'],
     operationId: 'getAllPublishers',
   })
-  @ApiResponse({ status: 200, description: 'Returns all available publishers' })
-  getAllPublishers(): Promise<Publisher[]> {
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all available publishers',
+    type: [PublisherDto],
+  })
+  getAllPublishers(): Promise<PublisherDto[]> {
     return this.publisherRepository.find();
   }
 
@@ -40,7 +44,11 @@ export class PublishersController {
     tags: ['publishers'],
     operationId: 'createPublisher',
   })
-  @ApiResponse({ status: 201, description: 'Publisher created successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Publisher created successfully',
+    type: PublisherDto,
+  })
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, UserGuard, RolesGuard)

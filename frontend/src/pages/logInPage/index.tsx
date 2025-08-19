@@ -5,10 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLoginMutation } from '@/stores/api/baseApi';
 import { ErrorNotification } from '@/components/ErrorNotification';
 import Cookies from 'js-cookie';
-import {
-	loginSchema,
-	type LoginFormData,
-} from '@/assets/validationSchemas/logIn';
+import { loginSchema, type LoginFormData } from '@/assets/validationSchemas';
 import AuthForm from '@/components/AuthForm';
 
 export default function LogInPage() {

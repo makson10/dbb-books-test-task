@@ -1,10 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {
-	borrowSchema,
-	type BorrowFormData,
-} from '@/assets/validationSchemas/borrow';
+import { borrowSchema, type BorrowFormData } from '@/assets/validationSchemas';
 import { useBorrowBookMutation } from '@/stores/api/baseApi';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '@/stores/hooks';

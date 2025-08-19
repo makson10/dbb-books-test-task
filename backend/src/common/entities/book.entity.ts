@@ -32,12 +32,12 @@ export class Book {
   @Column({ type: 'int' })
   copiesAvailable: number;
 
+  @RelationId((book: Book) => book.publisher)
+  publisherId: number;
+
   @ManyToOne(() => Publisher)
   @JoinColumn({ name: 'publisherId' })
   publisher: Publisher;
-
-  @RelationId((book: Book) => book.publisher)
-  publisherId: number;
 
   @ManyToMany(() => Author)
   @JoinTable({ name: 'book_authors' })

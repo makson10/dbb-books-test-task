@@ -3,10 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-	loginSchema,
-	type LoginFormData,
-} from '@/assets/validationSchemas/logIn';
+import { loginSchema, type LoginFormData } from '@/assets/validationSchemas';
 import { useLoginMutation } from '@/stores/api/baseApi';
 import Cookies from 'js-cookie';
 import { setUser } from '@/stores/slices/userSlice';

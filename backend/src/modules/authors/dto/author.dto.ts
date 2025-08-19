@@ -1,7 +1,10 @@
+import { Book } from '@/common/entities/book.entity';
+import { BookDto } from '@/modules/books/dto/book.dto';
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsString, Validate, IsNumber, IsDateString } from 'class-validator';
 
-@ApiSchema()
+@ApiSchema({ name: 'Author' })
 export class AuthorDto {
   @ApiProperty()
   @IsNumber()
@@ -17,4 +20,8 @@ export class AuthorDto {
     message: 'birthDate must be in the past',
   })
   birthDate: Date;
+
+  @ApiProperty({ type: [BookDto] })
+  @Type(() => BookDto)
+  books: Book[];
 }

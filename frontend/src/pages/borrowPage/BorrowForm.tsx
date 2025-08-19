@@ -1,5 +1,5 @@
 import type { UseFormRegister, FieldErrors } from 'react-hook-form';
-import type { BorrowFormData } from '@/assets/validationSchemas/borrow';
+import type { BorrowFormData } from '@/assets/validationSchemas';
 
 type Props = {
 	register: UseFormRegister<BorrowFormData>;

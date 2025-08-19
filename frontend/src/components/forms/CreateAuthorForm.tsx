@@ -6,7 +6,7 @@ import { ErrorNotification } from '@/components/ErrorNotification';
 import {
 	createAuthorSchema,
 	type CreateAuthorFormData,
-} from '@/assets/validationSchemas/createAuthor';
+} from '@/assets/validationSchemas';
 import { extractMessageFromError } from '@/assets/extractMessageFromError';
 
 type FormData = CreateAuthorFormData;

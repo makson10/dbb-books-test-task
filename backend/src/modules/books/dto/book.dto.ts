@@ -1,7 +1,7 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
-import { IsDate, IsISBN, IsNumber, IsString } from 'class-validator';
+import { IsDateString, IsISBN, IsNumber, IsString } from 'class-validator';
 
-@ApiSchema()
+@ApiSchema({ name: 'Book' })
 export class BookDto {
   @ApiProperty()
   id: number;
@@ -16,7 +16,7 @@ export class BookDto {
   isbn: string;
 
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   publishDate: Date;
 
   @ApiProperty()

@@ -1,5 +1,12 @@
-import { User } from '@/common/entities/user.entity';
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import { User, UserRole } from '@/common/entities/user.entity';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -16,6 +23,11 @@ import { AuthService } from '../auth/auth.service';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { TokenPayloadDto } from './dto/token-payload.dto';
 import { Token } from '@/common/decorators/token.decorator';
+import { ResponseUserDto } from './dto/response-user.dto';
+import { Roles } from '@/common/decorators/roles.decorator';
+import { JwtAuthGuard } from '@/common/guard/jwt-auth.guard';
+import { UserGuard } from '@/common/guard/user.guard';
+import { RolesGuard } from '@/common/guard/roles.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -28,6 +40,23 @@ export class UsersController {
   ) {}
 
   @ApiOperation({
+    summary: 'Get all users',
+    tags: ['users'],
+    operationId: 'getAllUsers',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all users',
+    type: [ResponseUserDto],
+  })
+  @Get()
+  async getAllUsers(): Promise<ResponseUserDto[]> {
+    return this.userRepository.find().then((users) => {
+      return users.map((user) => ({ ...user, password: undefined }));
+    });
+  }
+
+  @ApiOperation({
     summary: 'Create a new user',
     tags: ['users'],
     operationId: 'createUser',
@@ -38,6 +67,9 @@ export class UsersController {
     type: AuthResponseDto,
   })
   @ApiBody({ type: CreateUserDto })
+  @ApiBearerAuth()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, UserGuard, RolesGuard)
   @Post()
   async createUser(@Body() newUser: CreateUserDto): Promise<AuthResponseDto> {
     const hashedPassword = await this.hashService.hashPassword(

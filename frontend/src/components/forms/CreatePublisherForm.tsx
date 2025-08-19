@@ -6,7 +6,7 @@ import { ErrorNotification } from '@/components/ErrorNotification';
 import {
 	createPublisherSchema,
 	type CreatePublisherFormData,
-} from '@/assets/validationSchemas/createPublisher';
+} from '@/assets/validationSchemas';
 import { extractMessageFromError } from '@/assets/extractMessageFromError';
 
 type FormData = CreatePublisherFormData;

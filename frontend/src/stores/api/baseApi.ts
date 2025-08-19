@@ -27,7 +27,11 @@ const injectedRtkApi = api
         providesTags: ["books"],
       }),
       createBook: build.mutation<CreateBookApiResponse, CreateBookApiArg>({
-        query: () => ({ url: `/books`, method: "POST" }),
+        query: (queryArg) => ({
+          url: `/books`,
+          method: "POST",
+          body: queryArg.createBookDto,
+        }),
         invalidatesTags: ["books"],
       }),
       getBookCount: build.query<GetBookCountApiResponse, GetBookCountApiArg>({
@@ -48,13 +52,12 @@ const injectedRtkApi = api
         query: (queryArg) => ({ url: `/books/${queryArg.id}/history` }),
         providesTags: ["books"],
       }),
-      authorsControllerGetAllAuthors: build.query<
-        AuthorsControllerGetAllAuthorsApiResponse,
-        AuthorsControllerGetAllAuthorsApiArg
-      >({
-        query: () => ({ url: `/authors` }),
-        providesTags: ["authors"],
-      }),
+      getAllAuthors: build.query<GetAllAuthorsApiResponse, GetAllAuthorsApiArg>(
+        {
+          query: () => ({ url: `/authors` }),
+          providesTags: ["authors"],
+        },
+      ),
       createAuthor: build.mutation<CreateAuthorApiResponse, CreateAuthorApiArg>(
         {
           query: (queryArg) => ({
@@ -102,13 +105,6 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["publishers"],
       }),
-      borrowControllerGetBorrowRecords: build.query<
-        BorrowControllerGetBorrowRecordsApiResponse,
-        BorrowControllerGetBorrowRecordsApiArg
-      >({
-        query: () => ({ url: `/borrow` }),
-        providesTags: ["borrow"],
-      }),
       borrowBook: build.mutation<BorrowBookApiResponse, BorrowBookApiArg>({
         query: (queryArg) => ({
           url: `/borrow`,
@@ -127,13 +123,6 @@ const injectedRtkApi = api
           body: queryArg.borrowBookDto,
         }),
         invalidatesTags: ["return"],
-      }),
-      usersControllerGetUsers: build.query<
-        UsersControllerGetUsersApiResponse,
-        UsersControllerGetUsersApiArg
-      >({
-        query: () => ({ url: `/users` }),
-        providesTags: ["users"],
       }),
       createUser: build.mutation<CreateUserApiResponse, CreateUserApiArg>({
         query: (queryArg) => ({
@@ -168,7 +157,9 @@ export type GetAllBooksApiArg = {
   order?: string;
 };
 export type CreateBookApiResponse = unknown;
-export type CreateBookApiArg = void;
+export type CreateBookApiArg = {
+  createBookDto: CreateBookDto;
+};
 export type GetBookCountApiResponse =
   /** status 200 Returns total count of books */ {
     count?: number;
@@ -185,8 +176,9 @@ export type GetBookHistoryApiArg = {
   /** Book ID */
   id: string;
 };
-export type AuthorsControllerGetAllAuthorsApiResponse = unknown;
-export type AuthorsControllerGetAllAuthorsApiArg = void;
+export type GetAllAuthorsApiResponse =
+  /** status 200 Returns all authors */ AuthorDto[];
+export type GetAllAuthorsApiArg = void;
 export type CreateAuthorApiResponse = unknown;
 export type CreateAuthorApiArg = {
   createAuthor: CreateAuthor;
@@ -196,20 +188,20 @@ export type GetAllAuthorBooksApiArg = {
   /** Author ID */
   id: number;
 };
-export type GetGenresApiResponse = unknown;
+export type GetGenresApiResponse =
+  /** status 200 Returns all available genres */ Genre[];
 export type GetGenresApiArg = void;
 export type CreateGenreApiResponse = unknown;
 export type CreateGenreApiArg = {
   createGenre: CreateGenre;
 };
-export type GetAllPublishersApiResponse = unknown;
+export type GetAllPublishersApiResponse =
+  /** status 200 Returns all available publishers */ PublisherDto[];
 export type GetAllPublishersApiArg = void;
 export type CreatePublisherApiResponse = unknown;
 export type CreatePublisherApiArg = {
   createPublisher: CreatePublisher;
 };
-export type BorrowControllerGetBorrowRecordsApiResponse = unknown;
-export type BorrowControllerGetBorrowRecordsApiArg = void;
 export type BorrowBookApiResponse = unknown;
 export type BorrowBookApiArg = {
   borrowBookDto: BorrowBookDto;
@@ -218,8 +210,6 @@ export type CheckIsUserBorrowBookAndDontReturnApiResponse = unknown;
 export type CheckIsUserBorrowBookAndDontReturnApiArg = {
   borrowBookDto: BorrowBookDto;
 };
-export type UsersControllerGetUsersApiResponse = unknown;
-export type UsersControllerGetUsersApiArg = void;
 export type CreateUserApiResponse =
   /** status 201 User created successfully */ AuthResponseDto;
 export type CreateUserApiArg = {
@@ -261,6 +251,15 @@ export type BookWithRelationsDto = {
   publisher: PublisherDto;
   authors: AuthorDto[];
   genres: Genre[];
+};
+export type CreateBookDto = {
+  title: string;
+  isbn: string;
+  publishDate: string;
+  copiesTotal: number;
+  authorName: string;
+  publisherName: string;
+  genre: string;
 };
 export type CreateAuthor = {
   fullName: string;
@@ -311,17 +310,15 @@ export const {
   useGetBookCountQuery,
   useGetBookDetailsQuery,
   useGetBookHistoryQuery,
-  useAuthorsControllerGetAllAuthorsQuery,
+  useGetAllAuthorsQuery,
   useCreateAuthorMutation,
   useGetAllAuthorBooksQuery,
   useGetGenresQuery,
   useCreateGenreMutation,
   useGetAllPublishersQuery,
   useCreatePublisherMutation,
-  useBorrowControllerGetBorrowRecordsQuery,
   useBorrowBookMutation,
   useCheckIsUserBorrowBookAndDontReturnMutation,
-  useUsersControllerGetUsersQuery,
   useCreateUserMutation,
   useLoginMutation,
   useVerifyTokenMutation,

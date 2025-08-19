@@ -1,9 +1,10 @@
-import { useAppSelector } from '@/stores/hooks';
 import { useEffect } from 'react';
+import { useAppSelector } from '@/stores/hooks';
 import { useNavigate } from 'react-router';
-import CreateAuthorForm from '../../components/forms/CreateAuthorForm';
-import CreatePublisherForm from '../../components/forms/CreatePublisherForm';
-import CreateGenreForm from '../../components/forms/CreateGenreForm';
+import CreateAuthorForm from '@/components/forms/CreateAuthorForm';
+import CreatePublisherForm from '@/components/forms/CreatePublisherForm';
+import CreateGenreForm from '@/components/forms/CreateGenreForm';
+import CreateBookForm from '@/components/forms/CreateBookForm';
 import GoToHome from '@/components/GoToHome';
 
 const AdminDashboard = () => {
@@ -24,6 +25,11 @@ const AdminDashboard = () => {
 				<CreateAuthorForm />
 				<CreatePublisherForm />
 				<CreateGenreForm />
+				<div className="md:col-span-3 flex justify-center">
+					<div className="w-full max-w-2xl">
+						<CreateBookForm />
+					</div>
+				</div>
 			</div>
 		</div>
 	);

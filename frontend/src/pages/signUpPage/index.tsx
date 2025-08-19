@@ -5,10 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCreateUserMutation } from '@/stores/api/baseApi';
 import { ErrorNotification } from '@/components/ErrorNotification';
 import Cookies from 'js-cookie';
-import {
-	signUpSchema,
-	type SignUpFormData,
-} from '@/assets/validationSchemas/signUp';
+import { signUpSchema, type SignUpFormData } from '@/assets/validationSchemas';
 import AuthForm from '@/components/AuthForm';
 
 export default function SignUpPage() {

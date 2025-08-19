@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@/common/entities/user.entity';
 
@@ -23,7 +23,7 @@ export class AuthService {
       });
       return { id: payload.sub, name: payload.name, role: payload.role };
     } catch {
-      return null;
+      throw new UnauthorizedException('Invalid token');
     }
   }
 }

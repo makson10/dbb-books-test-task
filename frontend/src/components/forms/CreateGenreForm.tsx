@@ -6,7 +6,7 @@ import { ErrorNotification } from '@/components/ErrorNotification';
 import {
 	createGenreSchema,
 	type CreateGenreFormData,
-} from '@/assets/validationSchemas/createGenre';
+} from '@/assets/validationSchemas';
 import { extractMessageFromError } from '@/assets/extractMessageFromError';
 
 type FormData = CreateGenreFormData;

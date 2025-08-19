@@ -15,6 +15,9 @@ import { UserRole } from '@/common/entities/user.entity';
 import { JwtAuthGuard } from '@/common/guard/jwt-auth.guard';
 import { UserGuard } from '@/common/guard/user.guard';
 import { RolesGuard } from '@/common/guard/roles.guard';
+import { AuthorDto } from './dto/author.dto';
+import { Book } from '@/common/entities/book.entity';
+import { BookDto } from '../books/dto/book.dto';
 
 @ApiTags('authors')
 @Controller('authors')
@@ -24,21 +27,19 @@ export class AuthorsController {
   ) {}
 
   @ApiOperation({
-    summary: 'Get all books by author ID',
+    summary: 'Get all authors',
     tags: ['authors'],
-    operationId: 'getAllAuthorBooks',
+    operationId: 'getAllAuthors',
   })
-  @ApiParam({ name: 'id', description: 'Author ID', type: 'number' })
   @ApiResponse({
     status: 200,
-    description: 'Returns books for the specified author',
+    description: 'Returns all authors',
+    type: [AuthorDto],
   })
-  @Get('/:id/books')
-  getAllAuthorBooks(@Param('id') id: number): Promise<Author[]> {
+  @Get()
+  getAllAuthors(): Promise<AuthorDto[]> {
     return this.authorsRepository.find({
-      where: { id },
       relations: ['books'],
-      select: { books: true },
     });
   }
 
@@ -47,13 +48,38 @@ export class AuthorsController {
     tags: ['authors'],
     operationId: 'createAuthor',
   })
-  @ApiResponse({ status: 201, description: 'Author created successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Author created successfully',
+    type: AuthorDto,
+  })
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, UserGuard, RolesGuard)
   @Post()
-  createAuthor(@Body() newAuthor: CreateAuthorDto): Promise<Author> {
+  createAuthor(@Body() newAuthor: CreateAuthorDto): Promise<AuthorDto> {
     const author = this.authorsRepository.create(newAuthor);
     return this.authorsRepository.save(author);
+  }
+
+  @ApiOperation({
+    summary: 'Get all books by author ID',
+    tags: ['authors'],
+    operationId: 'getAllAuthorBooks',
+  })
+  @ApiParam({ name: 'id', description: 'Author ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns books for the specified author',
+    type: [BookDto],
+  })
+  @Get('/:id/books')
+  getAllAuthorBooks(@Param('id') id: number): Promise<BookDto[]> {
+    return this.authorsRepository
+      .findOne({
+        where: { id },
+        relations: ['books'],
+      })
+      .then((author) => author?.books || []);
   }
 }

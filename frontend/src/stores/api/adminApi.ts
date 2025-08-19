@@ -1,6 +1,8 @@
 import Cookies from 'js-cookie';
 import { baseApi as api } from './baseApi';
 import type {
+	CreateBookApiArg,
+	CreateBookApiResponse,
 	CreateAuthorApiArg,
 	CreateAuthorApiResponse,
 	CreateGenreApiArg,
@@ -41,6 +43,15 @@ const injectedAdminApi = api.injectEndpoints({
 			}),
 			invalidatesTags: ['publishers'],
 		}),
+		createBook: build.mutation<CreateBookApiResponse, CreateBookApiArg>({
+			query: (queryArg) => ({
+				url: `/books`,
+				method: 'POST',
+				body: queryArg.createBookDto,
+				headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+			}),
+			invalidatesTags: ['books'],
+		}),
 	}),
 	overrideExisting: true,
 });
@@ -51,4 +62,5 @@ export const {
 	useCreateAuthorMutation,
 	useCreateGenreMutation,
 	useCreatePublisherMutation,
+	useCreateBookMutation,
 } = injectedAdminApi;

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 import { IsNumber, IsString, Validate } from 'class-validator';
 
-@ApiSchema()
+@ApiSchema({ name: 'Publisher' })
 export class PublisherDto {
   @ApiProperty()
   @IsNumber()

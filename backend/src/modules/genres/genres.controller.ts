@@ -30,8 +30,12 @@ export class GenresController {
     tags: ['genres'],
     operationId: 'getGenres',
   })
-  @ApiResponse({ status: 200, description: 'Returns all available genres' })
-  getGenres(): Promise<Genre[]> {
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all available genres',
+    type: [GenreDto],
+  })
+  getGenres(): Promise<GenreDto[]> {
     return this.genreRepository.find();
   }
 
@@ -40,7 +44,11 @@ export class GenresController {
     tags: ['genres'],
     operationId: 'createGenre',
   })
-  @ApiResponse({ status: 201, description: 'Genre created successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Genre created successfully',
+    type: GenreDto,
+  })
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, UserGuard, RolesGuard)
