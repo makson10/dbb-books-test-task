@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
 import routes from './assets/routes';
@@ -9,11 +9,13 @@ import './styles/index.css';
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
-		<Provider store={store}>
-			<UserProvider>
-				<RouterProvider router={routes} />
-			</UserProvider>
-		</Provider>
+		<Suspense fallback={<p>Loading product details...</p>}>
+			<Provider store={store}>
+				<UserProvider>
+					<RouterProvider router={routes} />
+				</UserProvider>
+			</Provider>
+		</Suspense>
 	</StrictMode>
 );
 

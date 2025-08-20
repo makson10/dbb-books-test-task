@@ -3,7 +3,7 @@ import {
 	useGetBookDetailsQuery,
 	useGetBookHistoryQuery,
 } from '@/stores/api/baseApi';
-import type { BookWithRelationsDto } from '@/stores/api/baseApi';
+import type { BookWithRelations } from '@/stores/api/baseApi';
 import type { BorrowRecord } from '@/types/borrow.types';
 
 export const useBookDetail = () => {
@@ -19,7 +19,7 @@ export const useBookDetail = () => {
 	const { data: borrowHistory, isLoading: isHistoryLoading } =
 		useGetBookHistoryQuery({ id: id || '1' });
 
-	const typedBook = book as BookWithRelationsDto;
+	const typedBook = book as BookWithRelations;
 	const typedBorrowHistory = borrowHistory as BorrowRecord[] | undefined;
 
 	const handleBorrowClick = (bookTitle: string) =>

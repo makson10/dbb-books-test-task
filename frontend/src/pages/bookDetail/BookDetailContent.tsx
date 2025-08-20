@@ -1,10 +1,10 @@
 import React from 'react';
-import type { BookWithRelationsDto, Genre } from '@/stores/api/baseApi';
+import type { BookWithRelations, Genre } from '@/stores/api/baseApi';
 import type { BorrowRecord } from '@/types/borrow.types';
 import GoToHome from '@/components/GoToHome';
 
 type Props = {
-	book: BookWithRelationsDto;
+	book: BookWithRelations;
 	borrowHistory?: BorrowRecord[];
 	onBorrowClick: (bookTitle: string) => void;
 	onBrowseClick: () => void;

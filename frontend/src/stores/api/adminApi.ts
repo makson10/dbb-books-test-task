@@ -47,7 +47,7 @@ const injectedAdminApi = api.injectEndpoints({
 			query: (queryArg) => ({
 				url: `/books`,
 				method: 'POST',
-				body: queryArg.createBookDto,
+				body: queryArg.createBook,
 				headers: { Authorization: `Bearer ${Cookies.get('token')}` },
 			}),
 			invalidatesTags: ['books'],

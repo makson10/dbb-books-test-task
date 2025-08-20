@@ -27,7 +27,7 @@ export default function LogInPage() {
 		setShowError(false);
 
 		try {
-			const response = await login({ loginDto: data }).unwrap();
+			const response = await login({ login: data }).unwrap();
 			Cookies.set('token', response.token, {
 				expires: 7,
 			});

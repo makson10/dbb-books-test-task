@@ -1,15 +1,9 @@
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BorrowRecord } from '@/common/entities/borrow-record.entity';
 import { Repository } from 'typeorm';
+import { BorrowService } from './borrow.service';
 import { BookAndUserCheckGuard } from '@/common/guard/bookAndUserCheck.guard';
 import { CreateBorrowBookDto } from './dto/create-borrow.dto';
 import { CreateBorrowRequestDto } from './dto/create-borrow-request.dto';
@@ -21,6 +15,7 @@ export class BorrowController {
   constructor(
     @InjectRepository(BorrowRecord)
     private borrowRecordRepository: Repository<BorrowRecord>,
+    private borrowService: BorrowService,
   ) {}
 
   @ApiOperation({
@@ -70,21 +65,9 @@ export class BorrowController {
   ): Promise<BorrowRecordDto> {
     const { book, user } = request;
 
-    const userBorrowedBooksCount = await this.borrowRecordRepository.count({
-      where: { borrower: user },
-    });
+    await this.borrowService.ensureUserCanBorrow(user);
+    await this.borrowService.ensureUserDoesNotHaveBook(user, book);
 
-    if (userBorrowedBooksCount > 5) {
-      throw new BadRequestException(
-        `User ${user.name} has reached the maximum limit of borrowed books.`,
-      );
-    }
-
-    const newBorrowRecord = this.borrowRecordRepository.create({
-      borrower: user,
-      book,
-    });
-
-    return this.borrowRecordRepository.save(newBorrowRecord);
+    return this.borrowService.createBorrowRecord(user, book);
   }
 }

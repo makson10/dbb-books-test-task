@@ -25,7 +25,7 @@ const AdminLoginPage = () => {
 
 	const onSubmit = async (data: LoginFormData) => {
 		try {
-			const res = await login({ loginDto: data }).unwrap();
+			const res = await login({ login: data }).unwrap();
 			if (res?.user?.role === 'ADMIN') {
 				Cookies.set('token', res.token, { path: '/' });
 				dispatch(setUser(res.user));

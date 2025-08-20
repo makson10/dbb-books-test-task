@@ -36,7 +36,7 @@ export default function CreateBookForm() {
 		setShowError(false);
 		setSuccess('');
 		try {
-			await createBook({ createBookDto: formData }).unwrap();
+			await createBook({ createBook: formData }).unwrap();
 			setSuccess('Book created');
 			reset();
 		} catch (err: unknown) {

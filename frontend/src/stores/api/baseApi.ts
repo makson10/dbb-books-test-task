@@ -30,7 +30,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/books`,
           method: "POST",
-          body: queryArg.createBookDto,
+          body: queryArg.createBook,
         }),
         invalidatesTags: ["books"],
       }),
@@ -105,11 +105,18 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["publishers"],
       }),
+      getAllBorrowRecords: build.query<
+        GetAllBorrowRecordsApiResponse,
+        GetAllBorrowRecordsApiArg
+      >({
+        query: () => ({ url: `/borrow` }),
+        providesTags: ["borrow"],
+      }),
       borrowBook: build.mutation<BorrowBookApiResponse, BorrowBookApiArg>({
         query: (queryArg) => ({
           url: `/borrow`,
           method: "POST",
-          body: queryArg.borrowBookDto,
+          body: queryArg.createBorrowBook,
         }),
         invalidatesTags: ["borrow"],
       }),
@@ -120,15 +127,19 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/return`,
           method: "POST",
-          body: queryArg.borrowBookDto,
+          body: queryArg.createBorrowBook,
         }),
         invalidatesTags: ["return"],
+      }),
+      getAllUsers: build.query<GetAllUsersApiResponse, GetAllUsersApiArg>({
+        query: () => ({ url: `/users` }),
+        providesTags: ["users"],
       }),
       createUser: build.mutation<CreateUserApiResponse, CreateUserApiArg>({
         query: (queryArg) => ({
           url: `/users`,
           method: "POST",
-          body: queryArg.createUserDto,
+          body: queryArg.createUser,
         }),
         invalidatesTags: ["users"],
       }),
@@ -136,7 +147,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/users/login`,
           method: "POST",
-          body: queryArg.loginDto,
+          body: queryArg.login,
         }),
         invalidatesTags: ["users"],
       }),
@@ -149,41 +160,43 @@ const injectedRtkApi = api
   });
 export { injectedRtkApi as baseApi };
 export type GetAllBooksApiResponse =
-  /** status 200 Returns paginated list of books */ BookWithRelationsDto[];
+  /** status 200 Returns paginated list of books */ BookWithRelations[];
 export type GetAllBooksApiArg = {
   page?: number;
   limit?: number;
   sortBy?: string;
   order?: string;
 };
-export type CreateBookApiResponse = unknown;
+export type CreateBookApiResponse =
+  /** status 201 Book created successfully */ Book;
 export type CreateBookApiArg = {
-  createBookDto: CreateBookDto;
+  createBook: CreateBook;
 };
 export type GetBookCountApiResponse =
-  /** status 200 Returns total count of books */ {
-    count?: number;
-  };
+  /** status 200 Returns total count of books */ CountBook;
 export type GetBookCountApiArg = void;
 export type GetBookDetailsApiResponse =
-  /** status 200 Returns borrowing history for the book */ BookWithRelationsDto;
+  /** status 200 Returns borrowing history for the book */ BookWithRelations;
 export type GetBookDetailsApiArg = {
   /** Book ID */
   id: string;
 };
-export type GetBookHistoryApiResponse = unknown;
+export type GetBookHistoryApiResponse =
+  /** status 200 Returns borrowing history for the book */ BookBorrowHistory[];
 export type GetBookHistoryApiArg = {
   /** Book ID */
   id: string;
 };
 export type GetAllAuthorsApiResponse =
-  /** status 200 Returns all authors */ AuthorDto[];
+  /** status 200 Returns all authors */ Author[];
 export type GetAllAuthorsApiArg = void;
-export type CreateAuthorApiResponse = unknown;
+export type CreateAuthorApiResponse =
+  /** status 201 Author created successfully */ Author;
 export type CreateAuthorApiArg = {
   createAuthor: CreateAuthor;
 };
-export type GetAllAuthorBooksApiResponse = unknown;
+export type GetAllAuthorBooksApiResponse =
+  /** status 200 Returns books for the specified author */ Book[];
 export type GetAllAuthorBooksApiArg = {
   /** Author ID */
   id: number;
@@ -191,56 +204,56 @@ export type GetAllAuthorBooksApiArg = {
 export type GetGenresApiResponse =
   /** status 200 Returns all available genres */ Genre[];
 export type GetGenresApiArg = void;
-export type CreateGenreApiResponse = unknown;
+export type CreateGenreApiResponse =
+  /** status 201 Genre created successfully */ Genre;
 export type CreateGenreApiArg = {
   createGenre: CreateGenre;
 };
 export type GetAllPublishersApiResponse =
-  /** status 200 Returns all available publishers */ PublisherDto[];
+  /** status 200 Returns all available publishers */ Publisher[];
 export type GetAllPublishersApiArg = void;
-export type CreatePublisherApiResponse = unknown;
+export type CreatePublisherApiResponse =
+  /** status 201 Publisher created successfully */ Publisher;
 export type CreatePublisherApiArg = {
   createPublisher: CreatePublisher;
 };
-export type BorrowBookApiResponse = unknown;
+export type GetAllBorrowRecordsApiResponse =
+  /** status 200 List of all borrow records */ BorrowRecord[];
+export type GetAllBorrowRecordsApiArg = void;
+export type BorrowBookApiResponse =
+  /** status 201 Book borrowed successfully */ BorrowRecord;
 export type BorrowBookApiArg = {
-  borrowBookDto: BorrowBookDto;
+  createBorrowBook: CreateBorrowBook;
 };
-export type CheckIsUserBorrowBookAndDontReturnApiResponse = unknown;
+export type CheckIsUserBorrowBookAndDontReturnApiResponse =
+  /** status 200 Returns borrowing status for the book and user */ BorrowStatus;
 export type CheckIsUserBorrowBookAndDontReturnApiArg = {
-  borrowBookDto: BorrowBookDto;
+  createBorrowBook: CreateBorrowBook;
 };
+export type GetAllUsersApiResponse =
+  /** status 200 List of all users */ ResponseUser[];
+export type GetAllUsersApiArg = void;
 export type CreateUserApiResponse =
-  /** status 201 User created successfully */ AuthResponseDto;
+  /** status 201 User created successfully */ AuthResponse;
 export type CreateUserApiArg = {
-  createUserDto: CreateUserDto;
+  createUser: CreateUser;
 };
 export type LoginApiResponse =
-  /** status 200 User logged in successfully */ AuthResponseDto;
+  /** status 200 User logged in successfully */ AuthResponse;
 export type LoginApiArg = {
-  loginDto: LoginDto;
+  login: Login;
 };
 export type VerifyTokenApiResponse =
-  /** status 200 Token is valid */ TokenPayloadDto;
+  /** status 200 Token is valid */ TokenPayload;
 export type VerifyTokenApiArg = void;
-export type PublisherDto = {
+export type Publisher = {
   id: number;
   /** Publisher name */
   name: string;
   /** Year publisher was established */
   establishedYear: number;
 };
-export type AuthorDto = {
-  id: number;
-  fullName: string;
-  birthDate: string;
-};
-export type Genre = {
-  id: number;
-  /** Genre name */
-  name: string;
-};
-export type BookWithRelationsDto = {
+export type Book = {
   id: number;
   title: string;
   isbn: string;
@@ -248,11 +261,31 @@ export type BookWithRelationsDto = {
   copiesTotal: number;
   copiesAvailable: number;
   publisherId: number;
-  publisher: PublisherDto;
-  authors: AuthorDto[];
+};
+export type Author = {
+  id: number;
+  fullName: string;
+  birthDate: string;
+  books: Book[];
+};
+export type Genre = {
+  id: number;
+  /** Genre name */
+  name: string;
+};
+export type BookWithRelations = {
+  id: number;
+  title: string;
+  isbn: string;
+  publishDate: string;
+  copiesTotal: number;
+  copiesAvailable: number;
+  publisherId: number;
+  publisher: Publisher;
+  authors: Author[];
   genres: Genre[];
 };
-export type CreateBookDto = {
+export type CreateBook = {
   title: string;
   isbn: string;
   publishDate: string;
@@ -260,6 +293,24 @@ export type CreateBookDto = {
   authorName: string;
   publisherName: string;
   genre: string;
+};
+export type CountBook = {
+  count: number;
+};
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: "ADMIN" | "USER";
+  password: string;
+};
+export type BookBorrowHistory = {
+  id: number;
+  borrowedAt: string;
+  returnedAt: object | null;
+  borrower: User;
+  bookId: number;
+  borrowerId: number;
 };
 export type CreateAuthor = {
   fullName: string;
@@ -275,31 +326,40 @@ export type CreatePublisher = {
   /** Year publisher was established */
   establishedYear: number;
 };
-export type BorrowBookDto = {
+export type BorrowRecord = {
+  id: number;
+  borrowedAt: string;
+  returnedAt: object | null;
+  book: Book;
+  borrower: User;
+};
+export type CreateBorrowBook = {
   bookTitle: string;
   userName: string;
 };
-export type UserDto = {
+export type BorrowStatus = {
+  hasActiveBorrow: boolean;
+};
+export type ResponseUser = {
   id: number;
   name: string;
   email: string;
   role: "ADMIN" | "USER";
-  password: string;
 };
-export type AuthResponseDto = {
-  user: UserDto;
+export type AuthResponse = {
+  user: User;
   token: string;
 };
-export type CreateUserDto = {
+export type CreateUser = {
   name: string;
   email: string;
   password: string;
 };
-export type LoginDto = {
+export type Login = {
   email: string;
   password: string;
 };
-export type TokenPayloadDto = {
+export type TokenPayload = {
   id: number;
   name: string;
   role: "ADMIN" | "USER";
@@ -317,8 +377,10 @@ export const {
   useCreateGenreMutation,
   useGetAllPublishersQuery,
   useCreatePublisherMutation,
+  useGetAllBorrowRecordsQuery,
   useBorrowBookMutation,
   useCheckIsUserBorrowBookAndDontReturnMutation,
+  useGetAllUsersQuery,
   useCreateUserMutation,
   useLoginMutation,
   useVerifyTokenMutation,

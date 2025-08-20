@@ -67,9 +67,6 @@ export class UsersController {
     type: AuthResponseDto,
   })
   @ApiBody({ type: CreateUserDto })
-  @ApiBearerAuth()
-  @Roles(UserRole.ADMIN)
-  @UseGuards(JwtAuthGuard, UserGuard, RolesGuard)
   @Post()
   async createUser(@Body() newUser: CreateUserDto): Promise<AuthResponseDto> {
     const hashedPassword = await this.hashService.hashPassword(

@@ -1,4 +1,4 @@
-import type { AuthorDto, Genre, PublisherDto } from './baseApi';
+import type { Author, Genre, Publisher } from './baseApi';
 import { baseApi as api } from './baseApi';
 
 export interface GetBooksParams {
@@ -20,8 +20,8 @@ export type BookWithRelationsDto = {
 	copiesTotal: number;
 	copiesAvailable: number;
 	publisherId: number;
-	publisher: PublisherDto;
-	authors: AuthorDto[];
+	publisher: Publisher;
+	authors: Author[];
 	genres: Genre[];
 };
 

@@ -29,7 +29,7 @@ export default function SignUpPage() {
 		setSuccess(false);
 
 		try {
-			const response = await createUser({ createUserDto: data }).unwrap();
+			const response = await createUser({ createUser: data }).unwrap();
 			Cookies.set('token', response.token, {
 				expires: 7,
 			});

@@ -5,7 +5,6 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
-  RelationId,
   JoinColumn,
 } from 'typeorm';
 import { Publisher } from './publisher.entity';
@@ -20,7 +19,7 @@ export class Book {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ unique: true })
   isbn: string;
 
   @Column({ type: 'date' })
@@ -32,7 +31,7 @@ export class Book {
   @Column({ type: 'int' })
   copiesAvailable: number;
 
-  @RelationId((book: Book) => book.publisher)
+  @Column({ type: 'int' })
   publisherId: number;
 
   @ManyToOne(() => Publisher)

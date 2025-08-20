@@ -37,7 +37,7 @@ export default function useBorrowForm() {
 
 	const onSubmit = handleSubmit(async (data) => {
 		try {
-			await borrowBook({ borrowBookDto: data }).unwrap();
+			await borrowBook({ createBorrowBook: data }).unwrap();
 
 			reset();
 			navigate('/');

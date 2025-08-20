@@ -1,5 +1,3 @@
-[newline]
-
 # DBB Books — Library Management (NestJS + React)
 
 A compact, developer-focused README for the DBB Books test task repository. This project contains a NestJS backend and a React + Vite frontend for managing books, authors, publishers, genres and borrow operations.
@@ -80,6 +78,15 @@ Main endpoints (example):
 - GET /genres, POST /genres
 
 For full API reference use the Swagger UI at `/api` on the running backend.
+
+## Admin routes & permissions
+
+- Admin UI: `/admin` (login) and `/admin/dashboard`.
+- Admin REST endpoints are protected and require an authenticated user with the `admin` role.
+- Typical admin operations: create/update authors, publishers, genres, and create books — these endpoints are not available to regular users.
+- When testing locally with the provided seed data (see below) an initial admin user is created so you can log in to the admin UI and exercise admin-only features.
+
+Ensure the Authorization header (Bearer token) is provided for admin API calls.
 
 ## Generate frontend types from OpenAPI
 
