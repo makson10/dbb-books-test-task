@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: './api-gateway'
+    container_name: backend
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./package.json
+          action: rebuild
