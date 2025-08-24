@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Param,
   Post,
   Query,
@@ -32,23 +33,15 @@ import { Roles } from '@/common/decorators/roles.decorator';
 import { CountBookDto } from './dto/count-book.dto';
 import { BookDto } from './dto/book.dto';
 import { BookBorrowHistoryDto } from './dto/book-borrow-history.dto';
+import { ClientProxy } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
 @ApiTags('books')
 @Controller('books')
 export class BooksController {
   constructor(
-    @InjectRepository(Book) private booksRepository: Repository<Book>,
-
-    @InjectRepository(Author) private authorRepository: Repository<Author>,
-
-    @InjectRepository(Publisher)
-    private publisherRepository: Repository<Publisher>,
-
-    @InjectRepository(Genre)
-    private genreRepository: Repository<Genre>,
-
-    @InjectRepository(BorrowRecord)
-    private borrowRecordRepository: Repository<BorrowRecord>,
+    @Inject('BOOKS_SERVICE')
+    private booksService: ClientProxy,
   ) {}
 
   @ApiOperation({
@@ -64,13 +57,8 @@ export class BooksController {
   @Get()
   getAllBooks(
     @Query() parameters: GetAllBooksDto,
-  ): Promise<BookWithRelationsDto[]> {
-    return this.booksRepository.find({
-      take: parameters.limit,
-      skip: (parameters.page - 1) * parameters.limit,
-      order: { [parameters.sortBy]: parameters.order },
-      relations: ['authors', 'publisher', 'genres'],
-    });
+  ): Observable<BookWithRelationsDto[]> {
+    return this.booksService.send({ cmd: 'get_all_books' }, parameters);
   }
 
   @ApiOperation({
@@ -87,30 +75,10 @@ export class BooksController {
   @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, UserGuard, RolesGuard)
   @Post()
-  async createBook(@Body() newBook: CreateBookDto): Promise<BookDto> {
-    const author = await this.authorRepository.findOne({
-      where: { fullName: newBook.authorName },
-    });
-
-    const publisher = await this.publisherRepository.findOne({
-      where: { name: newBook.publisherName },
-    });
-
-    const genre = await this.genreRepository.findOne({
-      where: { name: newBook.genre },
-    });
-
-    const book = this.booksRepository.create({
-      ...newBook,
-      copiesAvailable: newBook.copiesTotal,
-      authors: [author as Author],
-      publisher: publisher as Publisher,
-      genres: [genre as Genre],
-    });
-    return await this.booksRepository.save(book);
+  createBook(@Body() newBook: CreateBookDto): Observable<BookDto> {
+    return this.booksService.send({ cmd: 'create_book' }, newBook);
   }
 
-  @Get('count')
   @ApiOperation({
     summary: 'Get total count of books',
     tags: ['books'],
@@ -121,8 +89,9 @@ export class BooksController {
     description: 'Returns total count of books',
     type: CountBookDto,
   })
-  async getBookCount(): Promise<CountBookDto> {
-    return { count: await this.booksRepository.count() };
+  @Get('count')
+  getBookCount(): Observable<CountBookDto> {
+    return this.booksService.send({ cmd: 'get_book_count' }, {});
   }
 
   @ApiOperation({
@@ -142,11 +111,8 @@ export class BooksController {
   @Get(':id')
   getBookDetails(
     @Param('id') bookId: string,
-  ): Promise<BookWithRelationsDto | null> {
-    return this.booksRepository.findOne({
-      where: { id: parseInt(bookId) },
-      relations: ['authors', 'publisher', 'genres'],
-    });
+  ): Observable<BookWithRelationsDto | null> {
+    return this.booksService.send({ cmd: 'get_book_details' }, { bookId });
   }
 
   @ApiOperation({
@@ -161,11 +127,9 @@ export class BooksController {
     type: [BookBorrowHistoryDto],
   })
   @Get(':id/history')
-  getBookHistory(@Param('id') bookId: string): Promise<BookBorrowHistoryDto[]> {
-    return this.borrowRecordRepository.find({
-      where: { bookId: parseInt(bookId) },
-      relations: ['borrower'],
-      order: { borrowedAt: 'DESC' },
-    });
+  getBookHistory(
+    @Param('id') bookId: string,
+  ): Observable<BookBorrowHistoryDto[]> {
+    return this.booksService.send({ cmd: 'get_book_history' }, { bookId });
   }
 }

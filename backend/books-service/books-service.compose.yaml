@@ -1,0 +1,13 @@
+services:
+  books-service:
+    build: '.'
+    container_name: books-service
+    expose:
+      - ${APP_PORT}
+    # develop:
+    #   watch:
+    #     - path: ./src
+    #       action: sync
+    #       target: /app/src
+    #     - path: ./package.json
+    #       action: rebuild

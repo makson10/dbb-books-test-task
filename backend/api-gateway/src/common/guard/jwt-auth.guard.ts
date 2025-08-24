@@ -4,11 +4,10 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthService } from '@/modules/auth/auth.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private authService: AuthService) {}
+  constructor() {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
@@ -19,11 +18,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = authHeader.replace('Bearer ', '').trim();
     if (!token) throw new UnauthorizedException('Token is missing or invalid');
 
-    const payload = this.authService.validateToken(token);
-    if (!payload) throw new UnauthorizedException('Invalid token');
-
-    request.user = payload;
-    request.token = token;
+    request['token'] = token;
     return true;
   }
 }

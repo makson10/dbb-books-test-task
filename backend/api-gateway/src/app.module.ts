@@ -16,20 +16,21 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './common/guard/jwt-auth.guard';
 import { BorrowReturnModule } from './modules/borrow-return/borrowReturn.module';
+import { GlobalClientsModule } from './modules/global-client/GlobalClientsModule.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    GlobalClientsModule,
     BooksModule,
     AuthorsModule,
-    GenresModule,
+    GenresModule, // ✅
     PublishersModule,
     BorrowModule,
     BorrowReturnModule,
     UsersModule,
-    AuthModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -41,7 +42,5 @@ dotenv.config();
       synchronize: true,
     }),
   ],
-  controllers: [],
-  providers: [JwtAuthGuard],
 })
 export class AppModule {}

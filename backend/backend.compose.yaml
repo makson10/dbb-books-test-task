@@ -1,13 +1,5 @@
-services:
-  backend:
-    build: './api-gateway'
-    container_name: backend
-    ports:
-      - '${APP_PORT}:${APP_PORT}'
-    develop:
-      watch:
-        - path: ./src
-          action: sync
-          target: /app/src
-        - path: ./package.json
-          action: rebuild
+include:
+  - ./api-gateway/api-gateway.compose.yaml
+  - ./auth-service/auth-service.compose.yaml
+  - ./genres-service/genres-service.compose.yaml
+  - ./books-service/books-service.compose.yaml

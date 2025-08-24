@@ -1,0 +1,13 @@
+services:
+  genres-service:
+    build: '.'
+    container_name: genres-service
+    expose:
+      - ${APP_PORT}
+    # develop:
+    #   watch:
+    #     - path: ./src
+    #       action: sync
+    #       target: /app/src
+    #     - path: ./package.json
+    #       action: rebuild
