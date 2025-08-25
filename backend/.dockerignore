@@ -1,0 +1,10 @@
+node_modules
+.git
+.vscode
+.idea
+.dockerignore
+.env
+*.env
+README.md
+eslint.config.mjs
+.prettierrc

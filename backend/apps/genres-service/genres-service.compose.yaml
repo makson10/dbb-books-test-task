@@ -1,0 +1,21 @@
+services:
+  genres-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: genres-service
+      target: development
+    command: npm run start:dev genres-service
+    env_file:
+      - .env
+    container_name: genres-service
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./package.json
+          action: rebuild

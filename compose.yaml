@@ -1,4 +1,4 @@
 include:
-  - frontend/frontend.compose.yaml
+  # - frontend/frontend.compose.yaml
   - backend/backend.compose.yaml
   - db/db.compose.yaml

@@ -1,0 +1,44 @@
+import { Module } from '@nestjs/common';
+import { BooksModule } from './modules/books/books.module';
+import { AuthorsModule } from './modules/authors/authors.module';
+import { GenresModule } from './modules/genres/genres.module';
+import { PublishersModule } from './modules/publishers/publishers.module';
+import { BorrowModule } from './modules/borrow/borrow.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Author } from '@api/common/entities/author.entity';
+import { Book } from '@api/common/entities/book.entity';
+import { Genre } from '@api/common/entities/genre.entity';
+import { Publisher } from '@api/common/entities/publisher.entity';
+import { BorrowRecord } from '@api/common/entities/borrow-record.entity';
+import { User } from '@api/common/entities/user.entity';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './modules/users/users.module';
+import { BorrowReturnModule } from './modules/borrow-return/borrowReturn.module';
+import { GlobalClientsModule } from './modules/global-client/GlobalClientsModule.module';
+// import * as dotenv from 'dotenv';
+// dotenv.config();
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    GlobalClientsModule,
+    BooksModule, // ✅
+    AuthorsModule,
+    GenresModule, // ✅
+    PublishersModule,
+    BorrowModule,
+    BorrowReturnModule,
+    UsersModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.POSTGRES_HOST,
+      port: parseInt(process.env.POSTGRES_PORT || '5432'),
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
+      entities: [Author, Book, Genre, Publisher, BorrowRecord, User],
+      synchronize: true,
+    }),
+  ],
+})
+export class AppModule {}

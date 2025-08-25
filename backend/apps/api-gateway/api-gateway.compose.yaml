@@ -1,0 +1,21 @@
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: api-gateway
+      target: development
+    command: npm run start:dev api-gateway
+    env_file:
+      - .env
+    container_name: backend
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./package.json
+          action: rebuild

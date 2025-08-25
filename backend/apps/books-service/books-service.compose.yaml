@@ -1,0 +1,21 @@
+services:
+  books-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: books-service
+      target: development
+    command: npm run start:dev books-service
+    env_file:
+      - .env
+    container_name: books-service
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./package.json
+          action: rebuild

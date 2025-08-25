@@ -1,0 +1,21 @@
+services:
+  authors-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: authors-service
+      target: development
+    command: npm run start:dev authors-service
+    env_file:
+      - .env
+    container_name: authors-service
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./package.json
+          action: rebuild
