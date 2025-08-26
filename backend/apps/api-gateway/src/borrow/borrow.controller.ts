@@ -1,21 +1,19 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BorrowService } from './borrow.service';
-import { BorrowRecord } from '@lib/assets/entities';
 import { BookAndUserCheckGuard } from '@lib/assets/guards';
 import { CreateBorrowBookDto } from './dto/create-borrow.dto';
 import { CreateBorrowRequestDto } from './dto/create-borrow-request.dto';
 import { BorrowRecordDto } from '@lib/assets/dto';
+import { ClientProxy } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
+import { BorrowStatusDto } from './dto/borrow-status';
 
 @ApiTags('borrow')
 @Controller('borrow')
 export class BorrowController {
   constructor(
-    @InjectRepository(BorrowRecord)
-    private borrowRecordRepository: Repository<BorrowRecord>,
-    private borrowService: BorrowService,
+    @Inject('BORROW_SERVICE')
+    private borrowClient: ClientProxy,
   ) {}
 
   @ApiOperation({
@@ -29,18 +27,8 @@ export class BorrowController {
     type: [BorrowRecordDto],
   })
   @Get()
-  async getAllBorrowRecords(): Promise<BorrowRecordDto[]> {
-    return this.borrowRecordRepository
-      .find({
-        relations: ['book', 'borrower'],
-      })
-      .then((records) =>
-        records.map((record) => ({
-          ...record,
-          bookId: undefined,
-          borrowerId: undefined,
-        })),
-      );
+  getAllBorrowRecords(): Observable<BorrowRecordDto[]> {
+    return this.borrowClient.send({ cmd: 'get_all_borrow_records' }, {});
   }
 
   @ApiOperation({
@@ -60,14 +48,32 @@ export class BorrowController {
   @ApiBody({ type: CreateBorrowBookDto })
   @UseGuards(BookAndUserCheckGuard)
   @Post()
-  async borrowBook(
+  borrowBook(
     @Req() request: CreateBorrowRequestDto,
-  ): Promise<BorrowRecordDto> {
-    const { book, user } = request;
+  ): Observable<BorrowRecordDto> {
+    return this.borrowClient.send({ cmd: 'borrow_book' }, request);
+  }
 
-    await this.borrowService.ensureUserCanBorrow(user);
-    await this.borrowService.ensureUserDoesNotHaveBook(user, book);
-
-    return this.borrowService.createBorrowRecord(user, book);
+  @ApiOperation({
+    summary: 'Check if user has borrowed a book and not returned it',
+    tags: ['borrow'],
+    operationId: 'checkUserBorrowBook',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns borrowing status for the book and user',
+    type: BorrowStatusDto,
+  })
+  @ApiBody({ type: CreateBorrowBookDto })
+  @UseGuards(BookAndUserCheckGuard)
+  @Post('/return')
+  checkUserBorrowBook(
+    @Req()
+    request: CreateBorrowRequestDto,
+  ): Observable<BorrowStatusDto> {
+    return this.borrowClient.send(
+      { cmd: 'check_user_borrow_book' },
+      { user: request.user, book: request.book },
+    );
   }
 }

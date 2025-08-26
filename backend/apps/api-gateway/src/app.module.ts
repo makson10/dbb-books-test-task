@@ -7,7 +7,6 @@ import { BorrowModule } from './borrow/borrow.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { BorrowReturnModule } from './borrow-return/borrowReturn.module';
 import { GlobalClientsModule } from './global-client/GlobalClientsModule.module';
 import {
   Author,
@@ -17,8 +16,6 @@ import {
   BorrowRecord,
   User,
 } from '@lib/assets/entities';
-// import * as dotenv from 'dotenv';
-// dotenv.config();
 
 @Module({
   imports: [
@@ -28,8 +25,7 @@ import {
     AuthorsModule, // ✅
     GenresModule, // ✅
     PublishersModule, // ✅
-    BorrowModule,
-    BorrowReturnModule,
+    BorrowModule, // ✅
     UsersModule,
     TypeOrmModule.forRoot({
       type: 'postgres',

@@ -55,6 +55,15 @@
         "tsConfigPath": "apps/books-service/tsconfig.app.json"
       }
     },
+    "borrow-service": {
+      "type": "application",
+      "root": "apps/borrow-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/borrow-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/borrow-service/tsconfig.app.json"
+      }
+    },
     "genres-service": {
       "type": "application",
       "root": "apps/genres-service",

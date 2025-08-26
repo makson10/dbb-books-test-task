@@ -45,6 +45,14 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           port: Number(process.env.PUBLISHERS_SERVICE_PORT),
         },
       },
+      {
+        name: 'BORROW_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: process.env.BORROW_SERVICE_HOST,
+          port: Number(process.env.BORROW_SERVICE_PORT),
+        },
+      },
     ]),
   ],
   exports: [ClientsModule],

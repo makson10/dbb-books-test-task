@@ -1,0 +1,21 @@
+services:
+  borrow-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: borrow-service
+      target: development
+    command: npm run start:dev borrow-service
+    env_file:
+      - .env
+    container_name: borrow-service
+    expose:
+      - ${APP_PORT}
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./package.json
+          action: rebuild
