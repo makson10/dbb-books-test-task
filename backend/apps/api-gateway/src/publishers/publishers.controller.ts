@@ -1,27 +1,26 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { PublisherDto } from '@lib/assets/dto';
-import { UserRole, Publisher } from '@lib/assets/entities';
+import { UserRole } from '@lib/assets/entities';
 import { Roles } from '@lib/assets/decorators';
 import { JwtAuthGuard, RolesGuard, UserGuard } from '@lib/assets/guards';
 import { CreatePublisherDto } from './dto/create-publisher.dto';
+import { ClientProxy } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
 @ApiTags('publishers')
 @Controller('publishers')
 export class PublishersController {
   constructor(
-    @InjectRepository(Publisher)
-    private publisherRepository: Repository<Publisher>,
+    @Inject('PUBLISHERS_SERVICE')
+    private publishersService: ClientProxy,
   ) {}
 
-  @Get()
   @ApiOperation({
     summary: 'Get all publishers',
     tags: ['publishers'],
@@ -32,8 +31,9 @@ export class PublishersController {
     description: 'Returns all available publishers',
     type: [PublisherDto],
   })
-  getAllPublishers(): Promise<PublisherDto[]> {
-    return this.publisherRepository.find();
+  @Get()
+  getAllPublishers(): Observable<PublisherDto[]> {
+    return this.publishersService.send({ cmd: 'get_all_publishers' }, {});
   }
 
   @ApiOperation({
@@ -52,8 +52,10 @@ export class PublishersController {
   @Post()
   createPublisher(
     @Body() newPublisher: CreatePublisherDto,
-  ): Promise<PublisherDto> {
-    const publisher = this.publisherRepository.create(newPublisher);
-    return this.publisherRepository.save(publisher);
+  ): Observable<PublisherDto> {
+    return this.publishersService.send(
+      { cmd: 'create_publisher' },
+      newPublisher,
+    );
   }
 }

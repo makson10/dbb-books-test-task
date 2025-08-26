@@ -11,8 +11,12 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@lib/assets": ["libs/assets/src"],
-      "@lib/assets/*": ["libs/assets/src/*"]
+      "@lib/assets": [
+        "libs/assets/src"
+      ],
+      "@lib/assets/*": [
+        "libs/assets/src/*"
+      ]
     },
     "incremental": true,
     "skipLibCheck": true,
@@ -23,4 +27,3 @@
     "noFallthroughCasesInSwitch": false
   }
 }
-

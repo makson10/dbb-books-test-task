@@ -27,7 +27,7 @@ import {
     BooksModule, // ✅
     AuthorsModule, // ✅
     GenresModule, // ✅
-    PublishersModule,
+    PublishersModule, // ✅
     BorrowModule,
     BorrowReturnModule,
     UsersModule,

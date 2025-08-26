@@ -63,7 +63,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/genres-service/tsconfig.app.json"
       }
+    },
+    "publishers-service": {
+      "type": "application",
+      "root": "apps/publishers-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/publishers-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/publishers-service/tsconfig.app.json"
+      }
     }
   }
 }
-

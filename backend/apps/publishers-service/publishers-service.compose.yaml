@@ -1,0 +1,21 @@
+services:
+  publishers-service:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: publishers-service
+      target: development
+    command: npm run start:dev publishers-service
+    env_file:
+      - .env
+    container_name: publishers-service
+    ports:
+      - '${APP_PORT}:${APP_PORT}'
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./package.json
+          action: rebuild
