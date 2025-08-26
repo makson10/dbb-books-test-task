@@ -1,18 +1,20 @@
-import { Book } from './entities/book.entity';
 import { Body, Controller } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import {
+  Book,
+  Author,
+  BorrowRecord,
+  Genre,
+  Publisher,
+} from '@lib/assets/entities';
+import { BookDto } from '@lib/assets/dto';
+import { MessagePattern, RpcException } from '@nestjs/microservices';
 import { GetAllBooksDto } from './dto/get-all-books.dto';
-import { Author } from './entities/author.entity';
-import { BorrowRecord } from './entities/borrow-record.entity';
 import { BookWithRelationsDto } from './dto/book-with-relations.dto';
 import { CreateBookDto } from './dto/create-book.dto';
-import { Publisher } from './entities/publisher.entity';
-import { Genre } from './entities/genre.entity';
 import { CountBookDto } from './dto/count-book.dto';
-import { BookDto } from './dto/book.dto';
 import { BookBorrowHistoryDto } from './dto/book-borrow-history.dto';
-import { MessagePattern, RpcException } from '@nestjs/microservices';
 
 @Controller('books')
 export class BooksController {

@@ -1,5 +1,5 @@
-import { BookDto } from '@lib/assets/dto';
 import { OmitType, ApiSchema } from '@nestjs/swagger';
+import { BookDto } from '@lib/assets/dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 

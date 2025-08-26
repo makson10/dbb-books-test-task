@@ -1,20 +1,22 @@
 import { Module } from '@nestjs/common';
-import { BooksModule } from './modules/books/books.module';
-import { AuthorsModule } from './modules/authors/authors.module';
-import { GenresModule } from './modules/genres/genres.module';
-import { PublishersModule } from './modules/publishers/publishers.module';
-import { BorrowModule } from './modules/borrow/borrow.module';
+import { BooksModule } from './books/books.module';
+import { AuthorsModule } from './authors/authors.module';
+import { GenresModule } from './genres/genres.module';
+import { PublishersModule } from './publishers/publishers.module';
+import { BorrowModule } from './borrow/borrow.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Author } from '@api/common/entities/author.entity';
-import { Book } from '@api/common/entities/book.entity';
-import { Genre } from '@api/common/entities/genre.entity';
-import { Publisher } from '@api/common/entities/publisher.entity';
-import { BorrowRecord } from '@api/common/entities/borrow-record.entity';
-import { User } from '@api/common/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from './modules/users/users.module';
-import { BorrowReturnModule } from './modules/borrow-return/borrowReturn.module';
-import { GlobalClientsModule } from './modules/global-client/GlobalClientsModule.module';
+import { UsersModule } from './users/users.module';
+import { BorrowReturnModule } from './borrow-return/borrowReturn.module';
+import { GlobalClientsModule } from './global-client/GlobalClientsModule.module';
+import {
+  Author,
+  Book,
+  Genre,
+  Publisher,
+  BorrowRecord,
+  User,
+} from '@lib/assets/entities';
 // import * as dotenv from 'dotenv';
 // dotenv.config();
 
@@ -23,7 +25,7 @@ import { GlobalClientsModule } from './modules/global-client/GlobalClientsModule
     ConfigModule.forRoot(),
     GlobalClientsModule,
     BooksModule, // ✅
-    AuthorsModule,
+    AuthorsModule, // ✅
     GenresModule, // ✅
     PublishersModule,
     BorrowModule,

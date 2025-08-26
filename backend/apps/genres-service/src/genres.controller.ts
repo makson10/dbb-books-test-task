@@ -1,8 +1,8 @@
-import { Genre } from './entities/genre.entity';
+import { Genre } from '@lib/assets/entities';
 import { Body, Controller } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GenreDto } from '@lib/assets/dto';
 import { Repository } from 'typeorm';
-import { GenreDto } from './dto/genre.dto';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { MessagePattern } from '@nestjs/microservices';
 

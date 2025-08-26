@@ -1,14 +1,12 @@
-import { Body, Controller, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@lib/assets/entities';
-import { MessagePattern } from '@nestjs/microservices';
 
-@Controller()
-export class AuthController {
+@Injectable()
+export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  @MessagePattern({ cmd: 'generate_token' })
-  generateToken(@Body() user: User): string {
+  generateToken(user: User): string {
     const payload = {
       sub: user.id,
       name: user.name,
@@ -18,8 +16,7 @@ export class AuthController {
     return this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
   }
 
-  @MessagePattern({ cmd: 'validate_token' })
-  validateToken(@Body() token: string) {
+  validateToken(token: string) {
     try {
       const payload = this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,

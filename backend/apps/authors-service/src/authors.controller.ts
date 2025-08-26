@@ -1,10 +1,9 @@
-import { Author } from './entities/author.entity';
+import { Author } from '@lib/assets/entities';
 import { Body, Controller, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AuthorDto, BookDto } from '@lib/assets/dto';
 import { CreateAuthorDto } from './dto/create-author.dto';
-import { AuthorDto } from './dto/author.dto';
-import { BookDto } from './dto/book.dto';
 import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('authors')

@@ -1,12 +1,8 @@
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { GenresController } from './genres.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Genre } from './entities/genre.entity';
-import { ConfigModule } from '@nestjs/config';
-import { Book } from './entities/book.entity';
-import { Publisher } from './entities/publisher.entity';
-import { User } from './entities/user.entity';
-import { Author } from './entities/author.entity';
+import { Author, Book, Genre, Publisher, User } from '@lib/assets/entities';
 
 @Module({
   imports: [

@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AuthorsController } from './authors.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BorrowRecord } from './entities/borrow-record.entity';
-import { Book } from './entities/book.entity';
-import { Genre } from './entities/genre.entity';
-import { Publisher } from './entities/publisher.entity';
-import { User } from './entities/user.entity';
-import { Author } from './entities/author.entity';
+import {
+  Author,
+  Book,
+  Genre,
+  Publisher,
+  BorrowRecord,
+  User,
+} from '@lib/assets/entities';
 
 @Module({
   imports: [

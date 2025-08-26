@@ -10,8 +10,8 @@ services:
     env_file:
       - .env
     container_name: auth-service
-    ports:
-      - '${APP_PORT}:${APP_PORT}'
+    expose:
+      - ${APP_PORT}
     develop:
       watch:
         - path: ./src

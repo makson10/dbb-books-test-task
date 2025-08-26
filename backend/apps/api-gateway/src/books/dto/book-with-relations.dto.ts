@@ -1,6 +1,6 @@
-import { Author, Genre, Publisher } from '@lib/assets/entities';
-import { AuthorDto, BookDto, GenreDto, PublisherDto } from '@lib/assets/dto';
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
+import { AuthorDto, BookDto, GenreDto, PublisherDto } from '@lib/assets/dto';
+import { Author, Genre, Publisher } from '@lib/assets/entities';
 
 @ApiSchema({ name: 'BookWithRelations' })
 export class BookWithRelationsDto extends BookDto {
