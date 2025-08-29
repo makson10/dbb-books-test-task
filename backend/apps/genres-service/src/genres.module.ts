@@ -2,20 +2,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { GenresController } from './genres.controller';
-import { Author, Book, Genre, Publisher, User } from '@lib/assets/entities';
+import { Genre } from '@lib/assets/entities';
+import { DatabaseModule } from '@lib/assets/modules';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT || '5432'),
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-      entities: [Author, Book, Genre, Publisher, User],
-    }),
+    DatabaseModule,
     TypeOrmModule.forFeature([Genre]),
   ],
   controllers: [GenresController],

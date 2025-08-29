@@ -12,20 +12,20 @@ export class AuthorsController {
     @InjectRepository(Author) private authorsRepository: Repository<Author>,
   ) {}
 
-  @MessagePattern({ cmd: 'getAllAuthors' })
+  @MessagePattern({ cmd: 'get-all-authors' })
   getAllAuthors(): Promise<AuthorDto[]> {
     return this.authorsRepository.find({
       relations: ['books'],
     });
   }
 
-  @MessagePattern({ cmd: 'createAuthor' })
+  @MessagePattern({ cmd: 'create-author' })
   createAuthor(@Body() newAuthor: CreateAuthorDto): Promise<AuthorDto> {
     const author = this.authorsRepository.create(newAuthor);
     return this.authorsRepository.save(author);
   }
 
-  @MessagePattern({ cmd: 'getAllAuthorBooks' })
+  @MessagePattern({ cmd: 'get-all-author-books' })
   async getAllAuthorBooks(@Param('id') id: number): Promise<BookDto[]> {
     const author = await this.authorsRepository.findOne({
       where: { id },

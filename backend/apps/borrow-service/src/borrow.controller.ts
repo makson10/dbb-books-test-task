@@ -5,7 +5,7 @@ import { BorrowService } from './borrow.service';
 import { BorrowRecord } from '@lib/assets/entities';
 import { BorrowRecordDto } from '@lib/assets/dto';
 import { MessagePattern } from '@nestjs/microservices';
-import { BorrowStatusDto } from './dto/borrow-status';
+import { BorrowStatusDto } from './dto/borrow-status.dto';
 import { CheckBorrowParametersDto } from './dto/check-borrow-parameters.dto';
 import { CreateBorrowRequestDto } from './dto/create-borrow-request.dto';
 

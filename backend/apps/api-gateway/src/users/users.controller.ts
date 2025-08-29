@@ -1,11 +1,4 @@
-import { User } from '@lib/assets/entities';
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -13,26 +6,19 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { HashService } from './hash.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { AuthService } from '../auth/auth.service';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { TokenPayloadDto } from './dto/token-payload.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { Token } from '@lib/assets/decorators';
+import { ClientProxy } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private hashService: HashService,
-    private authService: AuthService,
-  ) {}
+  constructor(@Inject('USERS_SERVICE') private userClient: ClientProxy) {}
 
   @ApiOperation({
     summary: 'Get all users',
@@ -45,10 +31,8 @@ export class UsersController {
     type: [ResponseUserDto],
   })
   @Get()
-  async getAllUsers(): Promise<ResponseUserDto[]> {
-    return this.userRepository.find().then((users) => {
-      return users.map((user) => ({ ...user, password: undefined }));
-    });
+  getAllUsers(): Observable<ResponseUserDto[]> {
+    return this.userClient.send({ cmd: 'get_all_users' }, {});
   }
 
   @ApiOperation({
@@ -63,24 +47,8 @@ export class UsersController {
   })
   @ApiBody({ type: CreateUserDto })
   @Post()
-  async createUser(@Body() newUser: CreateUserDto): Promise<AuthResponseDto> {
-    const hashedPassword = await this.hashService.hashPassword(
-      newUser.password,
-    );
-    const user = this.userRepository.create({
-      ...newUser,
-      password: hashedPassword,
-    });
-    const savedUser = await this.userRepository.save(user);
-    const token = this.authService.generateToken(savedUser);
-
-    const safeUser = { ...savedUser } as any;
-    delete safeUser.password;
-
-    return {
-      user: safeUser as User,
-      token,
-    };
+  createUser(@Body() newUser: CreateUserDto): Observable<AuthResponseDto> {
+    return this.userClient.send({ cmd: 'create_user' }, newUser);
   }
 
   @ApiOperation({
@@ -99,33 +67,8 @@ export class UsersController {
   })
   @ApiBody({ type: LoginDto })
   @Post('login')
-  async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.userRepository.findOne({
-      where: { email: loginDto.email },
-    });
-
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const isPasswordValid = await this.hashService.doesPasswordMatch(
-      loginDto.password,
-      user.password,
-    );
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const token = this.authService.generateToken(user);
-
-    const safeUser = { ...user } as any;
-    delete safeUser.password;
-
-    return {
-      user: safeUser as User,
-      token,
-    };
+  login(@Body() loginDto: LoginDto): Observable<AuthResponseDto> {
+    return this.userClient.send({ cmd: 'login' }, loginDto);
   }
 
   @ApiOperation({
@@ -144,9 +87,7 @@ export class UsersController {
   })
   @ApiBearerAuth()
   @Post('verify')
-  verifyToken(@Token() token: string): TokenPayloadDto {
-    const payload = this.authService.validateToken(token);
-    if (!payload) throw new UnauthorizedException('Invalid token');
-    return payload;
+  verifyToken(@Token() token: string): Observable<TokenPayloadDto> {
+    return this.userClient.send({ cmd: 'verify_token' }, token);
   }
 }

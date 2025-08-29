@@ -1,3 +1,4 @@
+version: '1.0'
 include:
   # - frontend/frontend.compose.yaml
   - backend/backend.compose.yaml

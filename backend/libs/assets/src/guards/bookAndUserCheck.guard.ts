@@ -3,29 +3,25 @@ import {
   CanActivate,
   ExecutionContext,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Book } from '../entities/book.entity';
-import { User } from '../entities/user.entity';
+import { ClientProxy } from '@nestjs/microservices';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class BookAndUserCheckGuard implements CanActivate {
   constructor(
-    @InjectRepository(Book)
-    private bookRepository: Repository<Book>,
-
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @Inject('BOOKS_SERVICE') private booksClient: ClientProxy,
+    @Inject('USERS_SERVICE') private usersClient: ClientProxy,
   ) {}
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const { body: parameters } = request;
 
-    const book = await this.bookRepository.findOne({
-      where: { title: parameters.bookTitle },
-    });
+    const book = await lastValueFrom(
+      this.booksClient.send({ cmd: 'get_book_by_title' }, parameters.bookTitle),
+    );
 
     if (!book || book.copiesAvailable <= 0) {
       throw new BadRequestException(
@@ -33,9 +29,9 @@ export class BookAndUserCheckGuard implements CanActivate {
       );
     }
 
-    const user = await this.userRepository.findOne({
-      where: { name: parameters.userName },
-    });
+    const user = await lastValueFrom(
+      this.usersClient.send({ cmd: 'get_user_by_name' }, parameters.userName),
+    );
 
     if (!user) {
       throw new BadRequestException(

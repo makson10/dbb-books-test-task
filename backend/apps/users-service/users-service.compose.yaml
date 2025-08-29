@@ -1,15 +1,15 @@
 services:
-  publishers-service:
+  users-service:
     build:
       context: ../..
       dockerfile: Dockerfile
       args:
-        APP_NAME: publishers-service
+        APP_NAME: users-service
       target: development
-    command: npm run start:dev publishers-service
+    command: npm run start:dev users-service
     env_file:
       - .env
-    container_name: publishers-service
+    container_name: users-service
     expose:
       - ${APP_PORT}
     develop:

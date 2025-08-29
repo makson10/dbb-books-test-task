@@ -5,7 +5,6 @@ export const addTagTypes = [
   "genres",
   "publishers",
   "borrow",
-  "return",
   "users",
 ] as const;
 const injectedRtkApi = api
@@ -120,16 +119,16 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["borrow"],
       }),
-      checkIsUserBorrowBookAndDontReturn: build.mutation<
-        CheckIsUserBorrowBookAndDontReturnApiResponse,
-        CheckIsUserBorrowBookAndDontReturnApiArg
+      checkUserBorrowBook: build.mutation<
+        CheckUserBorrowBookApiResponse,
+        CheckUserBorrowBookApiArg
       >({
         query: (queryArg) => ({
-          url: `/return`,
+          url: `/borrow/return`,
           method: "POST",
           body: queryArg.createBorrowBook,
         }),
-        invalidatesTags: ["return"],
+        invalidatesTags: ["borrow"],
       }),
       getAllUsers: build.query<GetAllUsersApiResponse, GetAllUsersApiArg>({
         query: () => ({ url: `/users` }),
@@ -225,9 +224,9 @@ export type BorrowBookApiResponse =
 export type BorrowBookApiArg = {
   createBorrowBook: CreateBorrowBook;
 };
-export type CheckIsUserBorrowBookAndDontReturnApiResponse =
+export type CheckUserBorrowBookApiResponse =
   /** status 200 Returns borrowing status for the book and user */ BorrowStatus;
-export type CheckIsUserBorrowBookAndDontReturnApiArg = {
+export type CheckUserBorrowBookApiArg = {
   createBorrowBook: CreateBorrowBook;
 };
 export type GetAllUsersApiResponse =
@@ -379,7 +378,7 @@ export const {
   useCreatePublisherMutation,
   useGetAllBorrowRecordsQuery,
   useBorrowBookMutation,
-  useCheckIsUserBorrowBookAndDontReturnMutation,
+  useCheckUserBorrowBookMutation,
   useGetAllUsersQuery,
   useCreateUserMutation,
   useLoginMutation,

@@ -39,7 +39,7 @@ export class AuthorsController {
   })
   @Get()
   getAllAuthors(): Observable<AuthorDto[]> {
-    return this.authorsService.send({ cmd: 'getAllAuthors' }, {});
+    return this.authorsService.send({ cmd: 'get-all-authors' }, {});
   }
 
   @ApiOperation({
@@ -57,7 +57,7 @@ export class AuthorsController {
   @UseGuards(JwtAuthGuard, UserGuard, RolesGuard)
   @Post()
   createAuthor(@Body() newAuthor: CreateAuthorDto): Observable<AuthorDto> {
-    return this.authorsService.send({ cmd: 'createAuthor' }, newAuthor);
+    return this.authorsService.send({ cmd: 'create-author' }, newAuthor);
   }
 
   @ApiOperation({
@@ -73,6 +73,6 @@ export class AuthorsController {
   })
   @Get('/:id/books')
   getAllAuthorBooks(@Param('id') id: number): Observable<BookDto[]> {
-    return this.authorsService.send({ cmd: 'getAllAuthorBooks' }, { id });
+    return this.authorsService.send({ cmd: 'get-all-author-books' }, { id });
   }
 }

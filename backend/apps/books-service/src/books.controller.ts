@@ -84,6 +84,15 @@ export class BooksController {
     });
   }
 
+  @MessagePattern({ cmd: 'get_book_by_title' })
+  getBookByTitle(
+    @Body() bookTitle: string,
+  ): Promise<BookWithRelationsDto | null> {
+    return this.booksRepository.findOne({
+      where: { title: bookTitle },
+    });
+  }
+
   @MessagePattern({ cmd: 'get_book_history' })
   async getBookHistory(
     @Body('bookId') bookId: string,
