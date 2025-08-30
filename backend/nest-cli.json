@@ -4,6 +4,8 @@
   "sourceRoot": "apps/api-gateway/src",
   "compilerOptions": {
     "deleteOutDir": true,
+    "webpack": true,
+    "webpackConfigPath": "webpack.config.js",
     "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
   },
   "monorepo": true,
@@ -24,9 +26,7 @@
       "entryFile": "index",
       "sourceRoot": "libs/assets/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/assets/tsconfig.lib.json",
-        "webpack": true,
-        "webpackConfigPath": "./webpack.config.js"
+        "tsConfigPath": "libs/assets/tsconfig.lib.json"
       }
     },
     "auth-service": {
@@ -94,4 +94,3 @@
     }
   }
 }
-
