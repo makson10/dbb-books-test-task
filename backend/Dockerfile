@@ -29,4 +29,8 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
+# ENV CHOKIDAR_USEPOLLING=true
+# ENV WATCHPACK_POLLING=true
+
+# CMD [ "npm", "run", "start:hmr" ]
 CMD [ "node", "dist/apps/${APP_NAME}/apps/${APP_NAME}/main" ]

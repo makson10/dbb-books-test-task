@@ -1,9 +1,9 @@
 include:
   - ./apps/api-gateway/api-gateway.compose.yaml
-  # - ./apps/auth-service/auth-service.compose.yaml
+  - ./apps/auth-service/auth-service.compose.yaml
   - ./apps/genres-service/genres-service.compose.yaml
-  # - ./apps/books-service/books-service.compose.yaml
-  # - ./apps/authors-service/authors-service.compose.yaml
-  # - ./apps/publishers-service/publishers-service.compose.yaml
-  # - ./apps/borrow-service/borrow-service.compose.yaml
-  # - ./apps/users-service/users-service.compose.yaml
+  - ./apps/books-service/books-service.compose.yaml
+  - ./apps/authors-service/authors-service.compose.yaml
+  - ./apps/publishers-service/publishers-service.compose.yaml
+  - ./apps/borrow-service/borrow-service.compose.yaml
+  - ./apps/users-service/users-service.compose.yaml
